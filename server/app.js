@@ -66,7 +66,6 @@ let timeout = null;
 			console.log('login successful');
 			res.json(req.body.code);
 		} else {
-			loginHistory[loginHistory.length - 1].status = 'failed';
 			console.log('login failed');
 			res.json(null);
 		}
@@ -103,8 +102,6 @@ let timeout = null;
 	});
 
 	app.post('/login-entries', (req, res) => {
-		console.log(req.body);
-
 		const { before, after } = req.body;
 		const index = loginHistory.findIndex(
 			(x) =>
@@ -124,8 +121,9 @@ let timeout = null;
 
 	app.get('/:id', (req, res) => {
 		const id = req.params.id;
-		if (Object.keys(loginHistory[loginHistory.length - 1])[0] === id) {
-			res.json(loginHistory[loginHistory.length - 1]);
+        const index = loginHistory.findIndex((x) => x.code === id);
+        if (index !== -1) {
+			res.json(loginHistory[index]);
 		} else {
 			res.json(null);
 		}
