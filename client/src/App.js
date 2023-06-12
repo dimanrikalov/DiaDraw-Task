@@ -1,7 +1,8 @@
 import styles from './App.module.css';
 import { LoginScreen } from './components/LoginScreen/LoginScreen';
 import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
-import {UserScreen} from './components/UserScreen/UserScreen';
+import { UserScreen } from './components/UserScreen/UserScreen';
+import { TableScreen } from './components/TableScreen/TableScreen';
 
 import {
 	createBrowserRouter,
@@ -17,10 +18,11 @@ function App() {
 		createRoutesFromElements(
 			<Route path="/" element={<Root />}>
 				<Route index element={<HomeScreen />} />
-				<Route path='/login' element={<LoginScreen />} />
-				<Route path='/register' element={<LoginScreen />} />
-				<Route path='/verify' element={<VerifyAccount />} />
-				<Route path='/user' element={<UserScreen/> } />
+				<Route path="/login" element={<LoginScreen />} />
+				<Route path="/register" element={<LoginScreen />} />
+				<Route path="/verify" element={<VerifyAccount />} />
+				<Route path="/user" element={<UserScreen />} />
+				<Route path="/login-entries" element={<TableScreen />} />
 			</Route>
 		)
 	);
