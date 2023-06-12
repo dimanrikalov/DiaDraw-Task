@@ -4,7 +4,20 @@ const cors = require('cors');
 const generateRandomNumber = require('./randomNumberGenerator');
 
 const app = express();
-const logins = [];
+
+const registeredUsers = [
+	{
+		email: 'dimo@abv.bg',
+		password: 'asda',
+		agree: true,
+	},
+	{
+		email: 'ivo@abv.bg',
+		password: '1234',
+		agree: false,
+	},
+];
+const loginHistory = [];
 let timeout = null;
 
 (function initExpress() {
@@ -12,38 +25,111 @@ let timeout = null;
 	app.use(express.json());
 
 	app.post('/login', (req, res) => {
-		const number = generateRandomNumber();
-		logins.push({ [number]: req.body });
-		console.log(logins[logins.length - 1]);
-		res.json(logins[logins.length - 1]);
-        const date = new Date();
-        console.log(`Timer started: ${date.getHours()} ${date.getMinutes()} ${date.getSeconds()}`);
-        timeout = setTimeout(()=> { //remove from login array if code not entered within 60 sec
-            logins.pop();
-            res.json()
-        },60000);
+		const date = new Date();
+		const dateString = `${
+			(date.toLocaleDateString(), date.toLocaleTimeString())
+		}`;
+
+		if (
+			!registeredUsers.some(
+				(x) =>
+					x.email === req.body.email &&
+					x.password === req.body.password
+			)
+		) {
+			loginHistory.push({
+				...req.body,
+				date: dateString,
+				status: 'failed',
+			});
+			return res.json({ error: 'Wrong username or password!' });
+		}
+
+		const number = generateRandomNumber(); //for the verification later
+		loginHistory.push({
+			code: number.toString(),
+			...req.body,
+			date: dateString,
+			status: 'pending',
+		});
+		res.json(loginHistory[loginHistory.length - 1]);
 	});
 
-    app.post('/verify', (req, res) => {
-        const lastKey = Object.keys(logins[logins.length - 1])[0];
-        if(req.body.code === lastKey) {
-            clearTimeout(timeout);
-            console.log('login successful');
-            res.json(lastKey);
-        } else {
-            console.log('login failed');
-            res.json(null);
-        }
-    })
+	app.post('/verify', (req, res) => {
+		const isValid = loginHistory.some(
+			(x) => req.body.code === x.code && x.status === 'pending'
+		); //find if there is a pending login attempt with this code (idk how secure it is)
 
-    app.get('/:id', (req, res) => {
-        const id = req.params.id;
-        if(Object.keys(logins[logins.length - 1])[0] === id) {
-            res.json(logins[logins.length - 1]);
-        } else {
-            res.json(null);
-        }
-    })
+		if (isValid) {
+			clearTimeout(timeout);
+			loginHistory[loginHistory.length - 1].status = 'successful';
+			console.log('login successful');
+			res.json(req.body.code);
+		} else {
+			loginHistory[loginHistory.length - 1].status = 'failed';
+			console.log('login failed');
+			res.json(null);
+		}
+	});
+
+	app.get('/login-entries', (req, res) => {
+		console.log('All login attempts:');
+		loginHistory.forEach((x) => console.log(x));
+		return res.json(loginHistory);
+	});
+
+	app.delete('/login-entries', (req, res) => {
+		const id = req.body.id;
+		if (Number(id)) {
+			const index = loginHistory.findIndex((x) => x.code === id);
+			if (index !== -1) {
+				loginHistory.splice(index, 1);
+			}
+		} else {
+			const index = loginHistory.findIndex(
+				(x) =>
+					x.email === req.body.email &&
+					x.password === req.body.password &&
+					x.agree === req.body.agree &&
+					x.date === req.body.date &&
+					x.status === req.body.status
+			);
+			if (index !== -1) {
+				loginHistory.splice(index, 1);
+			}
+		}
+
+		return res.json(loginHistory);
+	});
+
+	app.post('/login-entries', (req, res) => {
+		console.log(req.body);
+
+		const { before, after } = req.body;
+		const index = loginHistory.findIndex(
+			(x) =>
+				x.email === before.email &&
+				x.password === before.password &&
+				x.agree === before.agree &&
+				x.date === before.date &&
+				x.status === before.status
+		);
+
+		if (index !== -1) {
+			loginHistory.splice(index, 1, after);
+		}
+
+        return res.json(loginHistory);
+	});
+
+	app.get('/:id', (req, res) => {
+		const id = req.params.id;
+		if (Object.keys(loginHistory[loginHistory.length - 1])[0] === id) {
+			res.json(loginHistory[loginHistory.length - 1]);
+		} else {
+			res.json(null);
+		}
+	});
 
 	app.listen(port, () => {
 		console.log(`Server is listening on port ${port}...`);
