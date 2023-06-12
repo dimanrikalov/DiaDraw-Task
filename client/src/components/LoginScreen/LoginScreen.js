@@ -1,6 +1,7 @@
-import './LoginScreen.module.css';
+import styles from './LoginScreen.module.css';
 import { useReducer } from 'react';
 import ENDPOINTS from '../../endpoints';
+import { useNavigate } from 'react-router-dom';
 
 const EVENTS = {
 	EMAIL_CHANGE: 'EMAIL_CHANGE',
@@ -71,6 +72,8 @@ const errorReducer = (state, action) => {
 };
 
 export const LoginScreen = () => {
+	const navigate = useNavigate();
+
 	const [state, dispatch] = useReducer(reducer, {
 		email: '',
 		password: '',
@@ -123,17 +126,17 @@ export const LoginScreen = () => {
 			})
 		})
 		.then(res => res.json())
-		.then(data => console.log(data));
-
-		//clear the fields
-		dispatch({type: EVENTS.RESET})
+		.then(data => {
+			dispatch({type: EVENTS.RESET}); //clear the fields
+			navigate('/verify');
+		});
 	};
 
 	return (
-		<div className="container">
+		<div className={styles.container}>
 			<h1>Want to check out this file? Log in or sign up</h1>
-			<form onSubmit={handleSubmit} className="form-container">
-				<div className="error">
+			<form onSubmit={handleSubmit} className={styles['form-container']}>
+				<div className={styles.error}>
 					{errorsState.googleError && (
 						<p>{errorsState.googleError}</p>
 					)}
@@ -141,38 +144,38 @@ export const LoginScreen = () => {
 				<input
 					type="button"
 					value="Continue with Google"
-					className="google-login"
+					className={styles["google-login"]}
 					onClick={handleGoogleError}
 				/>
 				<p>or</p>
 				<input
 					type="email"
 					placeholder="Email"
-					className="data-input"
+					className={styles["data-input"]}
 					value={state.email}
 					onChange={handleEmailChange}
 				/>
-				<div className="error">
+				<div className={styles.error}>
 					{errorsState.emailError && <p>{errorsState.emailError}</p>}
 				</div>
 				<input
 					type="password"
 					placeholder="Password"
-					className="data-input"
+					className={styles["data-input"]}
 					value={state.password}
 					onChange={handlePasswordChange}
 				/>
-				<div className="error">
+				<div className={styles.error}>
 					{errorsState.passwordError && (
 						<p>{errorsState.passwordError}</p>
 					)}
 				</div>
-				<div className="confirm-div">
+				<div className={styles["confirm-div"]}>
 					<input
 						type="checkbox"
 						id="agree"
 						name="agree"
-						className="extra_info--checkbox--xK3ti"
+						className={styles["extra_info--checkbox--xK3ti"]}
 						checked={state.agree}
 						onChange={handleAgreeChange}
 					/>
@@ -182,19 +185,19 @@ export const LoginScreen = () => {
 				</div>
 				<input
 					type="submit"
-					value="Create account"
-					className="create-account"
+					value="Send code"
+					className={styles["create-account"]}
 				/>
 			</form>
-			<p className="subscript">
+			<p className={styles.subscript}>
 				By clicking "Create account" or "Continue with Google", you
 				agree to the <a href="#">Figma TOS</a> and{' '}
 				<a href="#">Privacy Policy</a>.
 			</p>
-			<a className="sign-on" href="#">
+			<a className={styles["sign-on"]} href="#">
 				Use single sign-on
 			</a>
-			<p className="already-have-acc">
+			<p className={styles["already-have-acc"]}>
 				Already have an account? <a href="#">Log in</a>
 			</p>
 		</div>
