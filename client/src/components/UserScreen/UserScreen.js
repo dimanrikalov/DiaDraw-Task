@@ -9,9 +9,7 @@ export const UserScreen = () => {
 		fetch(ENDPOINTS.GET_USER_DATA(id))
 			.then((res) => res.json())
 			.then((data) => {
-				if (data) {
-					setUser(data[id]);
-				}
+				setUser(data);
 			});
 	}, []);
 
