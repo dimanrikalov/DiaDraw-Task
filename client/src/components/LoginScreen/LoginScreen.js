@@ -1,4 +1,4 @@
-import './LoginScreen.css';
+import './LoginScreen.module.css';
 import { useReducer } from 'react';
 import ENDPOINTS from '../../endpoints';
 
