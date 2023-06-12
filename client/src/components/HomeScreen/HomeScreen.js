@@ -11,7 +11,7 @@ export const HomeScreen = () => {
 
     return (
         <div className={styles.container}>
-            <h1>Welcome!</h1>
+            <h1>Welcome</h1>
             <div className={styles.buttons}>
                 <a className={styles.button} onClick={clickHandler}>Login</a>
                 <a className={styles.button} onClick={clickHandler}>Register</a>

@@ -20,9 +20,9 @@ function App() {
 				<Route index element={<HomeScreen />} />
 				<Route path="/login" element={<LoginScreen />} />
 				<Route path="/register" element={<LoginScreen />} />
-				<Route path="/verify" element={<VerifyAccount />} />
-				<Route path="/user" element={<UserScreen />} />
-				<Route path="/login-entries" element={<TableScreen />} />
+				<Route path="/verify" element={<VerifyAccount />} />		{/* add route guard */}
+				<Route path="/user" element={<UserScreen />} /> 			{/* add route guard */}
+				<Route path="/login-entries" element={<TableScreen />} /> 	{/* add route guard */}
 			</Route>
 		)
 	);
