@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    gap: 32px;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid var(--grey-background);
+    padding: 64px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+.button {
+    text-decoration: none;
+    background-color: var(--black-background);
+    padding: 16px 32px;
+    border-radius: 12px;
+    color: var(--white-text);
+    font-weight: 600;
+}
