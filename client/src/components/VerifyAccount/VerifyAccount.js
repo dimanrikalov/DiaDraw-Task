@@ -9,7 +9,6 @@ export function VerifyAccount() {
 	const [OTP, setOTP] = useState('');
 
 	const handleSubmit = (e) => {
-		console.log(OTP);
 		fetch(ENDPOINTS.VERIFY, {
 			method: 'POST',
 			headers: {

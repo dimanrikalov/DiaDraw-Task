@@ -1,9 +1,8 @@
 const BASE_URL = 'http://localhost:3001'
-const LOGIN = 'http://localhost:3001/login';
-const VERIFY = 'http://localhost:3001/verify';
 
 export default {
-    LOGIN,
-    VERIFY,
+    LOGIN: `${BASE_URL}/login`,
+    VERIFY: `${BASE_URL}/verify`,
+    LOGIN_HISTORY: `${BASE_URL}/login-entries`,
     GET_USER_DATA : (id) => `${BASE_URL}/${id}`
 }
