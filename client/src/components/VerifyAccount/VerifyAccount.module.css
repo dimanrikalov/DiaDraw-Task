@@ -1,0 +1,27 @@
+@import url('../../reset.css');
+@import url('../../constants.css');
+
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+    gap: 64px;
+    justify-content: center;
+}
+
+.container div {
+    width: 100%;
+}
+
+.submitBtn {
+	width: 100%;
+	font-size: 16px;
+	padding: 12px;
+	border-radius: 7px;
+	border: 3px solid var(--black-background);
+	outline: none;
+	color: var(--white-text);
+    background-color: var(--black-background);
+    width: 100%;
+    cursor: pointer;
+}
