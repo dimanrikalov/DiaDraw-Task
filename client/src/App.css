@@ -1,10 +1,18 @@
+@import url('./reset.css');
 @import url('./constants.css');
 
 
-body {
+body, .inner-wrapper {
   background-color: var(--grey-background);
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.inner-wrapper {
+  background-color: var(--white-background);
   justify-content: center;
+  height: 100vh;
+  width: 75vw;
+
 }

@@ -4,7 +4,9 @@ import { LoginScreen } from './components/LoginScreen/LoginScreen';
 function App() {
 	return (
 		<div className="App">
-			<LoginScreen />
+			<div className="inner-wrapper">
+        <LoginScreen />
+      </div>
 		</div>
 	);
 }
