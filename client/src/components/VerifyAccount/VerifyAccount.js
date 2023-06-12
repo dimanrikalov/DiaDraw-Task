@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export function VerifyAccount() {
 	const navigate = useNavigate();
 	const [OTP, setOTP] = useState('');
+	const [error, setError] = useState(null);
 
 	const handleSubmit = (e) => {
 		fetch(ENDPOINTS.VERIFY, {
@@ -18,19 +19,23 @@ export function VerifyAccount() {
 				code: OTP,
 			}),
 		})
-		.then((res) => res.json())
-		.then((data) => {
-			if (data) {
-				localStorage.clear();
-				localStorage.setItem('id', data);
-				navigate('/user');
-			}
-		});
+			.then((res) => res.json())
+			.then((data) => {
+				if (data) {
+					setError(null);
+					localStorage.clear();
+					localStorage.setItem('id', data);
+					navigate('/user');
+				} else {
+					setError('Invalid code! Please try again!');
+				}
+			});
 	};
 
 	return (
 		<div className={styles.container}>
 			<h1>We sent you a code. Please type it in the field below.</h1>
+			{error && <h3 className={styles.error}>{error}</h3>}
 			<OTPInput
 				style={{ display: 'flex', justifyContent: 'space-between' }}
 				inputStyles={{
