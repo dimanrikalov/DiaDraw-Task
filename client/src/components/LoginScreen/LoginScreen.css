@@ -1,0 +1,5 @@
+@import url('../../constants.css');
+
+.red {
+    background-color: var(--white-background);
+}
