@@ -1,7 +1,9 @@
 :root {
-    --grey-background: #e0dcdc;
-    --grey-text: #b0acac;
+    --grey-background: #dcdcdc;
+    --grey-text: #8b8484;
     --white-background: #fff;
+    --white-text: #fff;
+    --black-background: #000;
     --black-text: #201c1c;
-    --blue-text: 6665fc;
+    --blue-text: #6665fc;
 }
