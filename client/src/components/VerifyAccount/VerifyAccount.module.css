@@ -13,6 +13,10 @@
     width: 80%;
 }
 
+.error {
+	color: var(--red-error);
+}
+
 .submitBtn {
 	font-weight: 600;
 	width: 100%;
