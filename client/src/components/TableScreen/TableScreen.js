@@ -55,14 +55,16 @@ export const TableScreen = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setData(data);
 			});
 	};
 
 	const handleEdit = (entry) => {
 		setEditingEntry(entry);
-		dispatch({ type: 'RESET_FIELDS' });
+		dispatch({ type: 'SET_FIELD', field: 'code', value: entry.code || 'No code' });
+		dispatch({ type: 'SET_FIELD', field: 'email', value: entry.email });
+		dispatch({ type: 'SET_FIELD', field: 'password', value: entry.password });
+		dispatch({ type: 'SET_FIELD', field: 'agree', value: entry.agree });
 		dispatch({ type: 'SET_FIELD', field: 'date', value: entry.date });
 		dispatch({ type: 'SET_FIELD', field: 'status', value: entry.status });
 	};
@@ -82,6 +84,23 @@ export const TableScreen = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => setData(data));
+	};
+
+	const handleCancel = (entry) => {
+		setEditingEntry(null);
+		dispatch({ type: 'RESET_FIELDS' });
+		if (entry) {
+			dispatch({
+				type: 'SET_FIELD',
+				field: 'date',
+				value: entry.date,
+			});
+			dispatch({
+				type: 'SET_FIELD',
+				field: 'status',
+				value: entry.status,
+			});
+		}
 	};
 
 	const handleFieldChange = (field, value) => {
@@ -183,16 +202,27 @@ export const TableScreen = () => {
 												/>
 											</td>
 											<td className={styles.buttonsTd}>
-												<button
-													onClick={() =>
-														handleConfirm(
-															entry,
-															state
-														)
-													}
-												>
-													Confirm
-												</button>
+												<div className={styles.flexDiv}>
+													<button
+														onClick={() =>
+															handleConfirm(
+																entry,
+																state
+															)
+														}
+													>
+														Confirm
+													</button>
+													<button
+														onClick={() =>
+															handleCancel(
+																entry
+															)
+														}
+													>
+														Cancel
+													</button>
+												</div>
 											</td>
 										</>
 									) : (
@@ -204,20 +234,22 @@ export const TableScreen = () => {
 											<td>{entry.date}</td>
 											<td>{entry.status}</td>
 											<td className={styles.buttonsTd}>
-												<button
-													onClick={() =>
-														handleEdit(entry)
-													}
-												>
-													Edit
-												</button>
-												<button
-													onClick={() =>
-														handleDelete(entry)
-													}
-												>
-													Delete
-												</button>
+												<div className={styles.flexDiv}>
+													<button
+														onClick={() =>
+															handleEdit(entry)
+														}
+													>
+														Edit
+													</button>
+													<button
+														onClick={() =>
+															handleDelete(entry)
+														}
+													>
+														Delete
+													</button>
+												</div>
 											</td>
 										</>
 									)}
