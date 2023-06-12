@@ -13,6 +13,7 @@ const EVENTS = {
 	ERROR_EMAIL: 'ERROR_EMAIL',
 	ERROR_PASSWORD: 'ERROR_PASSWORD',
 	ERROR_RESET: 'ERROR_RESET',
+	INVALID_CREDENTIALS: 'INVALID_CREDENTIALS'
 };
 
 const reducer = (state, action) => {
@@ -66,6 +67,10 @@ const errorReducer = (state, action) => {
 				emailError: false,
 				passwordError: false,
 			};
+		case EVENTS.INVALID_CREDENTIALS:
+			return {
+				googleError: 'Invalid username or password!'
+			}
 		default:
 			return state;
 	}
@@ -127,6 +132,13 @@ export const LoginScreen = () => {
 		})
 		.then(res => res.json())
 		.then(data => {
+			console.log(data);
+
+			if(data.error) {
+				dispatchError({type: EVENTS.ERROR_RESET})
+				dispatchError({type: EVENTS.INVALID_CREDENTIALS});
+				return;
+			}
 			dispatch({type: EVENTS.RESET}); //clear the fields
 			navigate('/verify');
 		});
