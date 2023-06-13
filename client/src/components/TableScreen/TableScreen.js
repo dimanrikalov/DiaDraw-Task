@@ -117,7 +117,6 @@ export const TableScreen = () => {
 		<>
 			{data && data.length > 0 ? (
 				<div className={styles.container}>
-					<h1 className={styles.title}>Login history</h1>
 					<table id="dataTable" className={styles.table}>
 						<thead>
 							<tr>
