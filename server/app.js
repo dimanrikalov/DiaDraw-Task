@@ -16,7 +16,6 @@ const registeredUsers = [
 	},
 ];
 const loginHistory = [];
-let timeout = null;
 
 (function initExpress() {
 	app.use(express.json());
@@ -58,7 +57,6 @@ let timeout = null;
 		); //find if there is a pending login attempt with this code (idk how secure it is)
 
 		if (isValid) {
-			clearTimeout(timeout);
 			loginHistory[loginHistory.length - 1].status = 'successful';
 			console.log('login successful');
 			res.json(req.body.code);

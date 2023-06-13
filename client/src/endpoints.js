@@ -1,4 +1,4 @@
-const BASE_URL = 'http://78.130.163.35:3001'
+const BASE_URL = 'http://localhost:3000';
 
 export default {
     LOGIN: `${BASE_URL}/login`,
