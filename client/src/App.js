@@ -30,10 +30,7 @@ function App() {
 					path="/verify-email"
 					element={<VerifyAccount toVerify={'email'} />}
 				/>{' '}
-				<Route path="/confirm-mobile" element={<ConfirmationScreen toVerify={'mobile'} />} />{' '}
-				<Route path="/confirm-email" element={<ConfirmationScreen toVerify={'email'} />} />{' '}
-				{/* add route guard */}
-				<Route path="/user" element={<UserScreen />} />{' '}
+				<Route path="/confirm" element={<ConfirmationScreen />} />{' '}
 				{/* add route guard */}
 				<Route path="/login-entries" element={<TableScreen />} />{' '}
 				{/* add route guard */}
