@@ -9,15 +9,13 @@ import ErrorIcon from '../../imgs/input-error.png';
 
 const EVENTS = {
 	EMAIL_CHANGE: 'EMAIL_CHANGE',
-	PASSWORD_CHANGE: 'PASSWORD_CHANGE',
-	AGREE_CHANGE: 'AGREE_CHANGE',
+	PHONE_CHANGE: 'PHONE_CHANGE',
 	RESET: 'RESET',
 
-	ERROR_GOOGLE: 'ERROR_GOOGLE',
+	ERROR_PHONE: 'ERROR_PHONE',
 	ERROR_EMAIL: 'ERROR_EMAIL',
-	ERROR_PASSWORD: 'ERROR_PASSWORD',
+	ERROR_CREDENTIALS: 'ERROR_CREDENTIALS',
 	ERROR_RESET: 'ERROR_RESET',
-	INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
 };
 
 const reducer = (state, action) => {
@@ -27,21 +25,15 @@ const reducer = (state, action) => {
 				...state,
 				email: action.value,
 			};
-		case EVENTS.PASSWORD_CHANGE:
+		case EVENTS.PHONE_CHANGE:
 			return {
 				...state,
-				password: action.value,
-			};
-		case EVENTS.AGREE_CHANGE:
-			return {
-				...state,
-				agree: !state.agree,
+				phone: action.value,
 			};
 		case EVENTS.RESET:
 			return {
 				email: '',
-				password: '',
-				agree: false,
+				phone: '',
 			};
 		default:
 			return state;
@@ -50,30 +42,26 @@ const reducer = (state, action) => {
 
 const errorReducer = (state, action) => {
 	switch (action.type) {
-		case EVENTS.ERROR_GOOGLE:
+		case EVENTS.ERROR_PHONE:
 			return {
 				...state,
-				googleError: 'Could not connect to Google Services!',
+				phoneError: action.errorMessage,
 			};
 		case EVENTS.ERROR_EMAIL:
 			return {
 				...state,
-				emailError: 'Enter a valid email!',
+				emailError: action.errorMessage,
 			};
-		case EVENTS.ERROR_PASSWORD:
+		case EVENTS.ERROR_CREDENTIALS:
 			return {
 				...state,
-				passwordError: 'Enter a valid password!',
+				loginError: action.errorMessage,
 			};
 		case EVENTS.ERROR_RESET:
 			return {
-				googleError: false,
 				emailError: false,
-				passwordError: false,
-			};
-		case EVENTS.INVALID_CREDENTIALS:
-			return {
-				googleError: 'Invalid username or password!',
+				phoneError: false,
+				loginError: false,
 			};
 		default:
 			return state;
@@ -85,68 +73,69 @@ export const LoginScreen = () => {
 
 	const [state, dispatch] = useReducer(reducer, {
 		email: '',
-		password: '',
-		agree: false,
+		phone: '',
 	});
 
 	const [errorsState, dispatchError] = useReducer(errorReducer, {
-		googleError: false,
 		emailError: false,
-		passwordError: false,
+		phoneError: false,
+		loginError: false,
 	});
 
 	const handleEmailChange = (e) => {
 		dispatch({ type: EVENTS.EMAIL_CHANGE, value: e.target.value });
 	};
 
-	const handlePasswordChange = (e) => {
-		dispatch({ type: EVENTS.PASSWORD_CHANGE, value: e.target.value });
-	};
-
-	const handleAgreeChange = () => {
-		dispatch({ type: EVENTS.AGREE_CHANGE });
-	};
-
-	const handleGoogleError = (e) => {
-		dispatchError({ type: EVENTS.ERROR_GOOGLE });
+	const handlePhoneChange = (e) => {
+		dispatch({ type: EVENTS.PHONE_CHANGE, value: e.target.value });
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		navigate('/verify-mobile');
-		// dispatchError({ type: EVENTS.ERROR_RESET });
+		dispatchError({ type: EVENTS.ERROR_RESET });
 
-		// if (!state.email) {
-		// 	dispatchError({ type: EVENTS.ERROR_EMAIL });
-		// 	return;
-		// }
-		// if (state.password.length < 4) {
-		// 	dispatchError({ type: EVENTS.ERROR_PASSWORD });
-		// 	return;
-		// }
-		// // Logic for form submission
+		if (state.phone.length !== 10) {
+			dispatchError({
+				type: EVENTS.ERROR_PHONE,
+				errorMessage: 'A valid phone number is required!',
+			});
+			return;
+		}
 
-		// fetch(ENDPOINTS.LOGIN, {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify({
-		// 		...state,
-		// 	}),
-		// })
-		// 	.then((res) => res.json())
-		// 	.then((data) => {
-		// 		console.log(data);
+		if (!state.email) {
+			dispatchError({
+				type: EVENTS.ERROR_EMAIL,
+				errorMessage: 'A valid e-mail address is required!',
+			});
+			return;
+		}
 
-		// 		if (data.error) {
-		// 			dispatchError({ type: EVENTS.ERROR_RESET });
-		// 			dispatchError({ type: EVENTS.INVALID_CREDENTIALS });
-		// 			return;
-		// 		}
-		// 		dispatch({ type: EVENTS.RESET }); //clear the fields
-		// 		navigate('/verify');
-		// 	});
+		fetch(ENDPOINTS.LOGIN, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				...state,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+
+				if (data.error) {
+					dispatchError({ type: EVENTS.ERROR_RESET });
+					dispatchError({
+						type: EVENTS.ERROR_CREDENTIALS,
+						errorMessage: data.error,
+					});
+					return;
+				}
+				dispatch({ type: EVENTS.RESET }); //clear the fields
+				sessionStorage.setItem('email', state.email);
+				sessionStorage.setItem('phone', state.phone);
+				navigate('/verify-mobile');
+			});
 	};
 
 	return (
@@ -157,32 +146,73 @@ export const LoginScreen = () => {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<a onClick={() => navigate(-1)}><img className={styles.arrow} src={BackArrow} alt="back-arrow" /></a>
+					<button onClick={() => navigate(-1)}>
+						<img
+							className={styles.arrow}
+							src={BackArrow}
+							alt="back-arrow"
+						/>
+					</button>
 					<h5>Enter your mobile no. & email id</h5>
 				</div>
 				<img className={styles.phone} src={PhoneImg} alt="phone-icon" />
-				<form action="#" className={styles.form} onSubmit={handleSubmit}>
+				<form className={styles.form} onSubmit={handleSubmit}>
 					<div className={styles.inputDiv}>
-						<label htmlFor="telephone">MOBILE NO.</label>
-						<input type="tel" name="telephone" id="telephone" placeholder='Enter your mobile no.'/>
-						<img className={styles.errorIcon} src={ErrorIcon} alt="error-icon" />
-						<div className={styles.errorDiv}>
-							<p>Please enter your mobile no.</p>
-						</div>
+						<label htmlFor="phone">MOBILE NO.</label>
+						<input
+							type="tel"
+							name="phone"
+							id="phone"
+							placeholder="Enter your mobile no."
+							value={state.phone}
+							onChange={handlePhoneChange}
+						/>
+						{errorsState.phoneError && (
+							<img
+								className={styles.errorIcon}
+								src={ErrorIcon}
+								alt="error-icon"
+							/>
+						)}
+						{errorsState.phoneError && (
+							<div className={styles.errorDiv}>
+								<p>{errorsState.phoneError}</p>
+							</div>
+						)}
 					</div>
 					<div className={styles.inputDiv}>
 						<label htmlFor="email">EMAIL ADDRESS</label>
-						<input type="email" name="email" id="email" placeholder='Enter your email id'/>
-						<img className={styles.errorIcon} src={ErrorIcon} alt="error-icon" />
-						<div className={styles.errorDiv}>
-							<p>Please enter your email id</p>
-						</div>
+						<input
+							type="email"
+							name="email"
+							id="email"
+							placeholder="Enter your email id"
+							value={state.email}
+							onChange={handleEmailChange}
+						/>
+						{errorsState.emailError && (
+							<img
+								className={styles.errorIcon}
+								src={ErrorIcon}
+								alt="error-icon"
+							/>
+						)}
+						{errorsState.emailError && (
+							<div className={styles.errorDiv}>
+								<p>{errorsState.emailError}</p>
+							</div>
+						)}
 					</div>
+					{errorsState.loginError && (
+						<div className={styles.errorDiv}>
+							<p>{errorsState.loginError}</p>
+						</div>
+					)}
 					<button>CREATE ACCOUNT</button>
 				</form>
 				<p>
-					By signing up, I agree to the <a href="#">Privacy Policy</a>{' '}
-					& <a href="#">Terms of Use</a>
+					By signing up, I agree to the <button>Privacy Policy</button>{' '}
+					& <button>Terms of Use</button>
 				</p>
 			</div>
 		</div>
