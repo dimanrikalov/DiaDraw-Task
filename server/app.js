@@ -48,6 +48,7 @@ let timeout = null;
 			date: dateString,
 			status: 'pending',
 		});
+		console.log(number);
 		res.json(loginHistory[loginHistory.length - 1]);
 	});
 
