@@ -1,0 +1,56 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 32px;
+}
+
+.container h3 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 24px;
+	line-height: 140.62%;
+	color: #333333;
+}
+
+.loginDiv {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	background: #ffffff;
+	border: 1px solid #e0e0e0;
+	box-shadow: 1px 4px 40px 2px rgba(129, 129, 165, 0.07);
+	border-radius: 10px;
+	align-items: center;
+	padding: 128px;
+}
+
+.loginDiv .progressBar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: var(--grey-background);
+	height: 7px;
+	border-radius: 10px;
+}
+
+.loginDiv .progressBar .progress {
+	width: 17%;
+	background-color: #6d2bc1;
+	height: 7px;
+	border-radius: 10px;
+}
+
+.loginDiv h4 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 21px;
+	line-height: 150%;
+	text-align: center;
+
+	color: #000000;
+}
