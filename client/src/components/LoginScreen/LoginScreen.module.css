@@ -38,7 +38,7 @@
 }
 
 .loginDiv .progressBar .progress {
-	width: 17%;
+	width: 35%;
 	background-color: #6d2bc1;
 	height: 7px;
 	border-radius: 10px;
@@ -157,4 +157,31 @@
 .loginDiv p a {
 	text-decoration: none;
 	color: #6d2bc1;
+}
+
+@media only screen and (max-width: 460px) {
+	.container {
+		margin-top: 32px;
+		gap: 12px;
+	}
+	.loginDiv {
+		width: 100%;
+		padding: 42px 24px;
+		gap: 18px;
+	}
+	.loginDiv *:not(.progressBar, .progress) {
+		transform: scale(0.97);
+	}
+	.form {
+		margin-top: -15px;
+		width: 100%;
+		gap: 32px;
+	}
+	.titleDiv .arrow {
+		left: -35px;
+		top: -8px;
+	}
+	.loginDiv p {
+		font-size: 16px;
+	}
 }

@@ -178,7 +178,7 @@ export const LoginScreen = () => {
 							<p>Please enter your email id</p>
 						</div>
 					</div>
-					<button>CONTINUE</button>
+					<button>CREATE ACCOUNT</button>
 				</form>
 				<p>
 					By signing up, I agree to the <a href="#">Privacy Policy</a>{' '}

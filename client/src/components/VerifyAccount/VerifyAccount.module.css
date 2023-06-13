@@ -39,7 +39,7 @@
 }
 
 .loginDiv .progressBar .progress {
-	width: 17%;
+	width: 65%;
 	background-color: #6d2bc1;
 	height: 7px;
 	border-radius: 10px;
@@ -167,4 +167,31 @@
 	text-decoration: none;
 	font-weight: 600;
 	color: #6d2bc1;
+}
+
+
+@media only screen and (max-width: 460px) {
+	.container {
+		margin-top: 32px;
+		gap: 12px;
+	}
+
+	.loginDiv {
+		width: 100%;
+		padding: 42px 24px;
+		gap: 32px;
+	}
+	.form {
+		width: 100%;
+	}
+	.form .inputDiv {
+		width: 100%;
+	}
+	.titleDiv h5 {
+		width: 85%;
+	}
+	.titleDiv .arrow {
+		top: 3px;
+		left: -5px;
+	}
 }

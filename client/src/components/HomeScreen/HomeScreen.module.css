@@ -1,14 +1,14 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
 }
 
 .titleDiv {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-    text-align: center;
+	text-align: center;
 }
 
 .titleDiv h3 {
@@ -40,11 +40,10 @@
 	border: 1px solid #e0e0e0;
 	box-shadow: 1px 4px 40px 2px rgba(129, 129, 165, 0.07);
 	border-radius: 10px;
-    display: flex;
-    gap: 46px;
-    align-items: center;
-
-    padding: 46px 64px;
+	display: flex;
+	gap: 46px;
+	align-items: center;
+	padding: 46px 64px;
 }
 
 .option .img {
@@ -53,10 +52,10 @@
 }
 
 .option .rightSide {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
 }
 
 .option h4 {
@@ -79,8 +78,18 @@
 	line-height: 0px;
 	letter-spacing: 0.89px;
 	text-transform: uppercase;
-    text-decoration: none;
-    padding: 24px 36px;
-    text-align: center;
+	text-decoration: none;
+	padding: 24px 36px;
+	text-align: center;
 	cursor: pointer;
+}
+
+@media only screen and (max-width: 460px) {
+	.container *:not(img) {
+		transform: scale(0.93);
+	}
+
+	.option {
+		padding: 46px 23px;
+	}
 }

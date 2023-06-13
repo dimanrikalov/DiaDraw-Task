@@ -110,7 +110,7 @@ export function VerifyAccount({ toVerify }) {
 						</div>
 					</div>
 
-					<button>CONTINUE</button>
+					<button>CREATE ACCOUNT</button>
 				</form>
 				<div className={styles.subscriptDiv}>
 					<p>

@@ -4,12 +4,7 @@ import CheckMark from '../../imgs/checkmark.png';
 export const ConfirmationScreen = ({toVerify}) => {
     return (
         <div className={styles.container}>
-			{
-				toVerify === 'mobile' ?
-				<h3>Verify your mobile number</h3>
-				:
-				<h3>Verify your email address</h3>
-			}
+			<h3>Verification successful!</h3>
 			<div className={styles.loginDiv}>
 				<div className={styles.progressBar}>
 					<div className={styles.progress}></div>
