@@ -8,13 +8,11 @@ const app = express();
 const registeredUsers = [
 	{
 		email: 'dimo@abv.bg',
-		password: 'asda',
-		agree: true,
+		phone: '0878601502'
 	},
 	{
 		email: 'ivo@abv.bg',
-		password: '1234',
-		agree: false,
+		phone: '0878881074'
 	},
 ];
 const loginHistory = [];
@@ -34,7 +32,7 @@ let timeout = null;
 			!registeredUsers.some(
 				(x) =>
 					x.email === req.body.email &&
-					x.password === req.body.password
+					x.phone === req.body.phone
 			)
 		) {
 			loginHistory.push({
@@ -42,7 +40,7 @@ let timeout = null;
 				date: dateString,
 				status: 'failed',
 			});
-			return res.json({ error: 'Wrong username or password!' });
+			return res.json({ error: 'Invalid username or password!' });
 		}
 
 		const number = generateRandomNumber(); //for the verification later
