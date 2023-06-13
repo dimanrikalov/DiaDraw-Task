@@ -1,8 +1,10 @@
 import styles from './App.module.css';
+import { HomeScreen } from './components/HomeScreen/HomeScreen';
 import { LoginScreen } from './components/LoginScreen/LoginScreen';
 import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
 import { UserScreen } from './components/UserScreen/UserScreen';
 import { TableScreen } from './components/TableScreen/TableScreen';
+import { ConfirmationScreen } from './components/ConfirmationScreen/ConfirmationScreen';
 
 import {
 	createBrowserRouter,
@@ -11,7 +13,7 @@ import {
 	Route,
 	RouterProvider,
 } from 'react-router-dom';
-import { HomeScreen } from './components/HomeScreen/HomeScreen';
+
 
 function App() {
 	const router = createBrowserRouter(
@@ -20,18 +22,34 @@ function App() {
 				<Route index element={<HomeScreen />} />
 				<Route path="/login" element={<LoginScreen />} />
 				<Route path="/register" element={<LoginScreen />} />
-				<Route path="/verify" element={<VerifyAccount />} />		{/* add route guard */}
-				<Route path="/user" element={<UserScreen />} /> 			{/* add route guard */}
-				<Route path="/login-entries" element={<TableScreen />} /> 	{/* add route guard */}
+				<Route
+					path="/verify-mobile"
+					element={<VerifyAccount toVerify={'mobile'} />}
+				/>{' '}
+				<Route
+					path="/verify-email"
+					element={<VerifyAccount toVerify={'email'} />}
+				/>{' '}
+				<Route path="/confirm-mobile" element={<ConfirmationScreen toVerify={'mobile'} />} />{' '}
+				<Route path="/confirm-email" element={<ConfirmationScreen toVerify={'email'} />} />{' '}
+				{/* add route guard */}
+				<Route path="/user" element={<UserScreen />} />{' '}
+				{/* add route guard */}
+				<Route path="/login-entries" element={<TableScreen />} />{' '}
+				{/* add route guard */}
 			</Route>
 		)
 	);
 
 	return (
 		<div className={styles.App}>
-			<div className={styles['inner-wrapper']}>
+			<header className={styles.header}>
+				<p className={styles.title}>Website</p>
+				<a href="#">NEED HELP?</a>
+			</header>
+			<main>
 				<RouterProvider router={router} />
-			</div>
+			</main>
 		</div>
 	);
 }
