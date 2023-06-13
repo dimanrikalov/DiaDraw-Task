@@ -3,6 +3,10 @@ import { useReducer } from 'react';
 import ENDPOINTS from '../../endpoints';
 import { useNavigate } from 'react-router-dom';
 
+import BackArrow from '../../imgs/back-arrow.png';
+import PhoneImg from '../../imgs/phone.png';
+import ErrorIcon from '../../imgs/input-error.png';
+
 const EVENTS = {
 	EMAIL_CHANGE: 'EMAIL_CHANGE',
 	PASSWORD_CHANGE: 'PASSWORD_CHANGE',
@@ -13,7 +17,7 @@ const EVENTS = {
 	ERROR_EMAIL: 'ERROR_EMAIL',
 	ERROR_PASSWORD: 'ERROR_PASSWORD',
 	ERROR_RESET: 'ERROR_RESET',
-	INVALID_CREDENTIALS: 'INVALID_CREDENTIALS'
+	INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
 };
 
 const reducer = (state, action) => {
@@ -37,8 +41,8 @@ const reducer = (state, action) => {
 			return {
 				email: '',
 				password: '',
-				agree: false
-			}
+				agree: false,
+			};
 		default:
 			return state;
 	}
@@ -69,8 +73,8 @@ const errorReducer = (state, action) => {
 			};
 		case EVENTS.INVALID_CREDENTIALS:
 			return {
-				googleError: 'Invalid username or password!'
-			}
+				googleError: 'Invalid username or password!',
+			};
 		default:
 			return state;
 	}
@@ -109,109 +113,78 @@ export const LoginScreen = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatchError({ type: EVENTS.ERROR_RESET });
+		navigate('/verify-mobile');
+		// dispatchError({ type: EVENTS.ERROR_RESET });
 
-		if (!state.email) {
-			dispatchError({ type: EVENTS.ERROR_EMAIL });
-			return;
-		}
-		if (state.password.length < 4) {
-			dispatchError({ type: EVENTS.ERROR_PASSWORD });
-			return;
-		}
-		// Logic for form submission
+		// if (!state.email) {
+		// 	dispatchError({ type: EVENTS.ERROR_EMAIL });
+		// 	return;
+		// }
+		// if (state.password.length < 4) {
+		// 	dispatchError({ type: EVENTS.ERROR_PASSWORD });
+		// 	return;
+		// }
+		// // Logic for form submission
 
-		fetch(ENDPOINTS.LOGIN, {
-			method: 'POST',
-			headers: {
-                'Content-Type': 'application/json',
-            },
-			body: JSON.stringify({
-				...state
-			})
-		})
-		.then(res => res.json())
-		.then(data => {
-			console.log(data);
+		// fetch(ENDPOINTS.LOGIN, {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 	},
+		// 	body: JSON.stringify({
+		// 		...state,
+		// 	}),
+		// })
+		// 	.then((res) => res.json())
+		// 	.then((data) => {
+		// 		console.log(data);
 
-			if(data.error) {
-				dispatchError({type: EVENTS.ERROR_RESET})
-				dispatchError({type: EVENTS.INVALID_CREDENTIALS});
-				return;
-			}
-			dispatch({type: EVENTS.RESET}); //clear the fields
-			navigate('/verify');
-		});
+		// 		if (data.error) {
+		// 			dispatchError({ type: EVENTS.ERROR_RESET });
+		// 			dispatchError({ type: EVENTS.INVALID_CREDENTIALS });
+		// 			return;
+		// 		}
+		// 		dispatch({ type: EVENTS.RESET }); //clear the fields
+		// 		navigate('/verify');
+		// 	});
 	};
 
 	return (
 		<div className={styles.container}>
-			<h1>Want to check out this file? Log in or sign up</h1>
-			<form onSubmit={handleSubmit} className={styles['form-container']}>
-				<div className={styles.error}>
-					{errorsState.googleError && (
-						<p>{errorsState.googleError}</p>
-					)}
+			<h3>Welcome to Website</h3>
+			<div className={styles.loginDiv}>
+				<div className={styles.progressBar}>
+					<div className={styles.progress}></div>
 				</div>
-				<input
-					type="button"
-					value="Continue with Google"
-					className={styles["google-login"]}
-					onClick={handleGoogleError}
-				/>
-				<p>or</p>
-				<input
-					type="email"
-					placeholder="Email"
-					className={styles["data-input"]}
-					value={state.email}
-					onChange={handleEmailChange}
-				/>
-				<div className={styles.error}>
-					{errorsState.emailError && <p>{errorsState.emailError}</p>}
+				<div className={styles.titleDiv}>
+					<a href="#"><img className={styles.arrow} src={BackArrow} alt="back-arrow" /></a>
+					<h5>Enter your mobile no. & email id</h5>
 				</div>
-				<input
-					type="password"
-					placeholder="Password"
-					className={styles["data-input"]}
-					value={state.password}
-					onChange={handlePasswordChange}
-				/>
-				<div className={styles.error}>
-					{errorsState.passwordError && (
-						<p>{errorsState.passwordError}</p>
-					)}
-				</div>
-				<div className={styles["confirm-div"]}>
-					<input
-						type="checkbox"
-						id="agree"
-						name="agree"
-						className={styles["extra_info--checkbox--xK3ti"]}
-						checked={state.agree}
-						onChange={handleAgreeChange}
-					/>
-					<label htmlFor="agree">
-						I agree to join Figma's mailing list
-					</label>
-				</div>
-				<input
-					type="submit"
-					value="Send code"
-					className={styles["create-account"]}
-				/>
-			</form>
-			<p className={styles.subscript}>
-				By clicking "Create account" or "Continue with Google", you
-				agree to the <a href="#">Figma TOS</a> and{' '}
-				<a href="#">Privacy Policy</a>.
-			</p>
-			<a className={styles["sign-on"]} href="#">
-				Use single sign-on
-			</a>
-			<p className={styles["already-have-acc"]}>
-				Already have an account? <a href="#">Log in</a>
-			</p>
+				<img className={styles.phone} src={PhoneImg} alt="phone-icon" />
+				<form action="#" className={styles.form} onSubmit={handleSubmit}>
+					<div className={styles.inputDiv}>
+						<label htmlFor="telephone">MOBILE NO.</label>
+						<input type="tel" name="telephone" id="telephone" placeholder='Enter your mobile no.'/>
+						<img className={styles.errorIcon} src={ErrorIcon} alt="error-icon" />
+						<div className={styles.errorDiv}>
+							<p>Please enter your email id</p>
+						</div>
+					</div>
+					<div className={styles.inputDiv}>
+						<label htmlFor="email">EMAIL ADDRESS</label>
+						<input type="email" name="email" id="email" placeholder='Enter your email id'/>
+						<img className={styles.errorIcon} src={ErrorIcon} alt="error-icon" />
+						<div className={styles.errorDiv}>
+							<p>Please enter your email id</p>
+						</div>
+					</div>
+					<button>CONTINUE</button>
+				</form>
+				<p>
+					By signing up, I agree to the <a href="#">Privacy Policy</a>{' '}
+					& <a href="#">Terms of Use</a>
+				</p>
+			</div>
 		</div>
 	);
 };
