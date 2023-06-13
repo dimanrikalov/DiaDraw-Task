@@ -67,8 +67,9 @@
 	color: #333333;
 }
 
-.option a {
+.option button {
 	background-color: #001b36;
+	border: 1px solid #001b36;
 	border-radius: 5px;
 	color: var(--white-text);
 	font-family: 'Inter';

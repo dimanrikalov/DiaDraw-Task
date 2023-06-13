@@ -1,7 +1,7 @@
 import styles from './ConfirmationScreen.module.css';
 import CheckMark from '../../imgs/checkmark.png';
 
-export const ConfirmationScreen = ({toVerify}) => {
+export const ConfirmationScreen = () => {
     return (
         <div className={styles.container}>
 			<h3>Verification successful!</h3>

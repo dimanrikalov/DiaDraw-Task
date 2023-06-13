@@ -8,10 +8,6 @@ import oldUserImage from '../../imgs/user-box.png';
 export const HomeScreen = () => {
 	const navigate = useNavigate();
 
-	const clickHandler = (e) => {
-		navigate('/login');
-	};
-
 	return (
 		<div className={styles.container}>
 			<div className={styles.titleDiv}>
@@ -23,14 +19,14 @@ export const HomeScreen = () => {
 					<img className={styles.img} src={newUserImage} alt="new-user" />
 					<div className={styles.rightSide}>
 						<h4>I'm new user</h4>
-						<a onClick={clickHandler}>CREATE ACCOUNT</a>
+						<button onClick={()=>navigate('/register')}>CREATE ACCOUNT</button>
 					</div>
 				</div>
 				<div className={styles.option}>
 					<img className={styles.img} src={oldUserImage} alt="old-user" />
 					<div className={styles.rightSide}>
 						<h4>I have an account</h4>
-						<a onClick={clickHandler}>LOGIN NOW</a>
+						<button onClick={()=>navigate('/login')}>LOGIN NOW</button>
 					</div>
 				</div>
 			</div>
