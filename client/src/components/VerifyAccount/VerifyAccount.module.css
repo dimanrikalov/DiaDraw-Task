@@ -1,33 +1,170 @@
-@import url('../../reset.css');
-@import url('../../constants.css');
-
 .container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-    gap: 64px;
-    justify-content: center;
+	gap: 32px;
 }
 
-.container div {
-    width: 80%;
-}
-
-.error {
-	color: var(--red-error);
-}
-
-.submitBtn {
+.container h3 {
+	font-family: 'Inter';
+	font-style: normal;
 	font-weight: 600;
+	font-size: 24px;
+	line-height: 140.62%;
+	color: #333333;
+}
+
+.loginDiv {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	background: #ffffff;
+	border: 1px solid #e0e0e0;
+	box-shadow: 1px 4px 40px 2px rgba(129, 129, 165, 0.07);
+	border-radius: 10px;
+	align-items: center;
+	padding: 46px 0px;
+	width: 90%;
+}
+
+.loginDiv .progressBar {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100%;
-	font-size: 19px;
-	letter-spacing: 1px;
+	background-color: var(--grey-background);
+	height: 7px;
+	border-radius: 10px;
+}
+
+.loginDiv .progressBar .progress {
+	width: 17%;
+	background-color: #6d2bc1;
+	height: 7px;
+	border-radius: 10px;
+}
+
+.titleDiv {
+	position: relative;
+	display: flex;
+	align-self: flex-start;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.titleDiv h5 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 155%;
+	color: #000000;
+	width: 60%;
+	text-align: center;
+}
+
+.titleDiv h5 span {
+	font-weight: 600;
+	color: #6d2bc1;
+}
+
+.titleDiv .arrow {
+	position: absolute;
+	left: 8%;
+	top: 5%;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 75%;
+	gap: 32px;
+}
+
+.form .inputDiv {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.form .inputDiv label {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 13px;
+	line-height: 150%;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: #000000;
+}
+
+.form .inputDiv input {
+	background: #ffffff;
+	border: 1px solid #b3b3c9;
+	border-radius: 4px;
+	font-size: 16px;
+	font-family: 'Inter';
 	padding: 12px;
-	border-radius: 7px;
-	border: 3px solid var(--black-background);
-	outline: none;
-	color: var(--white-text);
-    background-color: var(--black-background);
-    width: 100%;
-    cursor: pointer;
+}
+
+.errorIcon {
+	height: 15px;
+	width: 15px;
+	position: absolute;
+	right: 16px;
+	top: 42px;
+}
+
+.form .inputDiv .errorDiv {
+	background: #fdf0f0;
+	border-radius: 5px;
+	padding: 16px;
+}
+
+.form .inputDiv .errorDiv p {
+	text-align: left;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 19px;
+	color: #eb5757;
+}
+
+.form button {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 0px;
+	letter-spacing: 0.89px;
+	text-transform: uppercase;
+	color: #ffffff;
+	background-color: #001b36;
+	padding: 21px;
+	width: 100%;
+	border-radius: 5px;
+	border: 1px solid #001b36;
+	cursor: pointer;
+}
+
+.subscriptDiv p {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 25.6px;
+	color: #333333;
+	text-align: center;
+}
+
+.subscriptDiv p a {
+	text-decoration: none;
+	font-weight: 600;
+	color: #6d2bc1;
 }
