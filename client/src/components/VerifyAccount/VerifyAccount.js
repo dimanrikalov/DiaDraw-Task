@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import OTPInput from 'otp-input-react';
 import styles from './VerifyAccount.module.css';
 import ENDPOINTS from '../../endpoints';
 import { useNavigate } from 'react-router-dom';
@@ -9,38 +8,39 @@ import PhoneImg from '../../imgs/phone.png';
 import ErrorIcon from '../../imgs/input-error.png';
 import Envelope from '../../imgs/envelope.png';
 
-export function VerifyAccount({ toVerify }) {
+export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();
-	const [OTP, setOTP] = useState('');
 	const [error, setError] = useState(null);
+	const [inputValue, setInputValue] = useState('');
+
+	const handleChange = (e) => {
+		setInputValue(e.target.value);
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (toVerify === 'mobile') {
-			navigate('/confirm-mobile');
-		} else {
-			navigate('/confirm-email');
-		}
-		// fetch(ENDPOINTS.VERIFY, {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify({
-		// 		code: OTP,
-		// 	}),
-		// })
-		// 	.then((res) => res.json())
-		// 	.then((data) => {
-		// 		if (data) {
-		// 			setError(null);
-		// 			localStorage.clear();
-		// 			localStorage.setItem('id', data);
-		// 			navigate('/user');
-		// 		} else {
-		// 			setError('Invalid code! Please try again!');
-		// 		}
-		// 	});
+
+		fetch(ENDPOINTS.VERIFY, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				code: inputValue,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data) {
+					setError(null);
+					localStorage.clear();
+					sessionStorage.clear();
+					localStorage.setItem('id', data);
+					navigate('/confirm');
+				} else {
+					setError('Invalid code! Please try again!');
+				}
+			});
 	};
 
 	return (
@@ -55,22 +55,22 @@ export function VerifyAccount({ toVerify }) {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<a onClick={() => navigate(-1)}>
+				<button onClick={() => navigate(-1)}>
 						<img
 							className={styles.arrow}
 							src={BackArrow}
 							alt="back-arrow"
 						/>
-					</a>
+					</button>
 					{toVerify === 'mobile' ? (
 						<h5>
-							A 6-digit code has been sent as a text messge to{' '}
-							<span>+1 900-00-1234</span>
+							A 6-digit code has been sent as a text message to{' '}
+							<span>{sessionStorage.getItem('phone')}</span>
 						</h5>
 					) : (
 						<h5>
-							A 6-digit code has been sent to{' '}
-							<span>youremail@emaildomain.com</span>
+							A 6-digit code has been sent as an email to{' '}
+							<span>{sessionStorage.getItem('email')}</span>
 						</h5>
 					)}
 				</div>
@@ -87,49 +87,51 @@ export function VerifyAccount({ toVerify }) {
 						alt="phone-icon"
 					/>
 				)}
-				<form
-					action="#"
-					className={styles.form}
-					onSubmit={handleSubmit}
-				>
+				<form className={styles.form} onSubmit={handleSubmit}>
 					<div className={styles.inputDiv}>
-						<label htmlFor="telephone">VERIFICATION CODE</label>
+						<label htmlFor="verificationCode">VERIFICATION CODE</label>
 						<input
 							type="tel"
-							name="telephone"
-							id="telephone"
-							placeholder="Enter 6-digit verification code here"
+							name="verificationCode"
+							id="verificationCode"
+							placeholder="Enter your mobile no."
+							value={inputValue}
+							onChange={handleChange}
 						/>
-						<img
-							className={styles.errorIcon}
-							src={ErrorIcon}
-							alt="error-icon"
-						/>
-						<div className={styles.errorDiv}>
-							<p>Invalid verification code!</p>
-						</div>
+						{error && (
+							<img
+								className={styles.errorIcon}
+								src={ErrorIcon}
+								alt="error-icon"
+							/>
+						)}
+						{error && (
+							<div className={styles.errorDiv}>
+								<p>Invalid verification code!</p>
+							</div>
+						)}
 					</div>
 
 					<button>CREATE ACCOUNT</button>
 				</form>
 				<div className={styles.subscriptDiv}>
 					<p>
-						Didn't receive code? <a href="#">Resend Code</a>
+						Didn't receive code? <button>Resend Code</button>
 					</p>
 					<p>OR</p>
 					<p>
 						{toVerify === 'mobile' ? (
-							<a href="/verify-email">
+							<button onClick={()=>navigate('/verify-email')}>
 								Send verification code on email
-							</a>
+							</button>
 						) : (
-							<a href="/verify-mobile">
+							<button onClick={()=>navigate('/verify-mobile')}>
 								Send verification code on mobile no.
-							</a>
+							</button>
 						)}
 					</p>
 				</div>
 			</div>
 		</div>
 	);
-}
+};

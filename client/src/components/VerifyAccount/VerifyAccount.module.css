@@ -153,6 +153,13 @@
 	cursor: pointer;
 }
 
+.subscriptDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+}
+
 .subscriptDiv p {
 	font-family: 'Inter';
 	font-style: normal;
@@ -163,7 +170,11 @@
 	text-align: center;
 }
 
-.subscriptDiv p a {
+.subscriptDiv p button {
+	font-style: normal;
+	font-size: 16px;
+	background-color: transparent;
+	border: none;
 	text-decoration: none;
 	font-weight: 600;
 	color: #6d2bc1;
