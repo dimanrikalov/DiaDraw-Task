@@ -157,7 +157,7 @@ export const LoginScreen = () => {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<a href="#"><img className={styles.arrow} src={BackArrow} alt="back-arrow" /></a>
+					<a onClick={() => navigate(-1)}><img className={styles.arrow} src={BackArrow} alt="back-arrow" /></a>
 					<h5>Enter your mobile no. & email id</h5>
 				</div>
 				<img className={styles.phone} src={PhoneImg} alt="phone-icon" />
@@ -167,7 +167,7 @@ export const LoginScreen = () => {
 						<input type="tel" name="telephone" id="telephone" placeholder='Enter your mobile no.'/>
 						<img className={styles.errorIcon} src={ErrorIcon} alt="error-icon" />
 						<div className={styles.errorDiv}>
-							<p>Please enter your email id</p>
+							<p>Please enter your mobile no.</p>
 						</div>
 					</div>
 					<div className={styles.inputDiv}>

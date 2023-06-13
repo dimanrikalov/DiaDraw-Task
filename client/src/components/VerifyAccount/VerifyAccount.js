@@ -55,7 +55,7 @@ export function VerifyAccount({ toVerify }) {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<a href="#">
+					<a onClick={() => navigate(-1)}>
 						<img
 							className={styles.arrow}
 							src={BackArrow}

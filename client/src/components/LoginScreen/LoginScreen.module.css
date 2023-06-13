@@ -65,6 +65,7 @@
 	position: absolute;
 	left: 0;
 	top: 15%;
+	cursor: pointer;
 }
 
 .form {
@@ -179,7 +180,7 @@
 	}
 	.titleDiv .arrow {
 		left: -35px;
-		top: -8px;
+		top: -9px;
 	}
 	.loginDiv p {
 		font-size: 16px;
