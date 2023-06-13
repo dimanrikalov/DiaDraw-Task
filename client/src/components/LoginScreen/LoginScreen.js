@@ -1,7 +1,7 @@
 import styles from './LoginScreen.module.css';
-import { useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import ENDPOINTS from '../../endpoints';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import BackArrow from '../../imgs/back-arrow.png';
 import PhoneImg from '../../imgs/phone.png';
@@ -71,6 +71,8 @@ const errorReducer = (state, action) => {
 export const LoginScreen = () => {
 	const navigate = useNavigate();
 
+	const [style, setStyle] = useState({});
+
 	const [state, dispatch] = useReducer(reducer, {
 		email: '',
 		phone: '',
@@ -82,6 +84,17 @@ export const LoginScreen = () => {
 		loginError: false,
 	});
 
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setStyle({width: '35%'});
+		}, 100);
+
+		return () => {
+			clearTimeout(timeout);
+		}
+	}, []);
+
+
 	const handleEmailChange = (e) => {
 		dispatch({ type: EVENTS.EMAIL_CHANGE, value: e.target.value });
 	};
@@ -92,7 +105,6 @@ export const LoginScreen = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log('phone made a request')
 		dispatchError({ type: EVENTS.ERROR_RESET });
 
 		if (state.phone.length !== 10) {
@@ -144,7 +156,7 @@ export const LoginScreen = () => {
 			<h3>Welcome to Website</h3>
 			<div className={styles.loginDiv}>
 				<div className={styles.progressBar}>
-					<div className={styles.progress}></div>
+					<div className={styles.progress} style={style}></div>
 				</div>
 				<div className={styles.titleDiv}>
 					<button className={styles.arrow} onClick={() => navigate(-1)}>

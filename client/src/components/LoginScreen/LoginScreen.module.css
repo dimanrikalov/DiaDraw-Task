@@ -38,10 +38,11 @@
 }
 
 .loginDiv .progressBar .progress {
-	width: 35%;
+	width: 0%;
 	background-color: #6d2bc1;
 	height: 7px;
 	border-radius: 10px;
+	transition: 400ms ease-in-out;
 }
 
 .titleDiv {
@@ -104,6 +105,11 @@
 	font-size: 16px;
 	font-family: 'Inter';
 	padding: 12px;
+}
+
+.form .inputDiv input:focus {
+	outline: 2px solid #6d2bc1;
+	border-color:  transparent;
 }
 
 .errorIcon {
@@ -189,7 +195,8 @@
 		width: 100%;
 		gap: 32px;
 	}
-	.loginDiv p {
+	.loginDiv p,
+	.loginDiv p button {
 		font-size: 16px;
 	}
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './VerifyAccount.module.css';
 import ENDPOINTS from '../../endpoints';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,19 @@ import Envelope from '../../imgs/envelope.png';
 
 export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();
+	const [style, setStyle] = useState({});
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setStyle({width: '65%'});
+		}, 100);
+
+		return () => {
+			clearTimeout(timeout);
+		}
+	}, []);
 
 	const handleChange = (e) => {
 		setInputValue(e.target.value);
@@ -52,7 +63,7 @@ export const VerifyAccount = ({ toVerify }) => {
 			)}
 			<div className={styles.loginDiv}>
 				<div className={styles.progressBar}>
-					<div className={styles.progress}></div>
+					<div className={styles.progress} style={style}></div>
 				</div>
 				<div className={styles.titleDiv}>
 				<button className={styles.arrow} onClick={() => navigate(-1)}>
@@ -93,7 +104,7 @@ export const VerifyAccount = ({ toVerify }) => {
 							type="tel"
 							name="verificationCode"
 							id="verificationCode"
-							placeholder="Enter your mobile no."
+							placeholder="Enter 6-digit verification code here"
 							value={inputValue}
 							onChange={handleChange}
 						/>

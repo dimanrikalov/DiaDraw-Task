@@ -38,10 +38,11 @@
 }
 
 .loginDiv .progressBar .progress {
-	width: 100%;
+	width: 65%;
 	background-color: #6d2bc1;
 	height: 7px;
 	border-radius: 10px;
+	transition: 400ms ease-in-out;
 }
 
 .loginDiv h4 {
