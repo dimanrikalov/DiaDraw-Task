@@ -2,14 +2,6 @@ import { useEffect, useReducer, useState } from 'react';
 import ENDPOINTS from '../../endpoints';
 import styles from './TableScreen.module.css';
 
-const initialState = {
-	code: '',
-	email: '',
-	phone: '',
-	date: '',
-	status: '',
-};
-
 function reducer(state, action) {
 	switch (action.type) {
 		case 'SET_FIELD':
@@ -18,7 +10,13 @@ function reducer(state, action) {
 				[action.field]: action.value,
 			};
 		case 'RESET_FIELDS':
-			return initialState;
+			return {
+				code: '',
+				email: '',
+				phone: '',
+				date: '',
+				status: '',
+			};
 		default:
 			return state;
 	}
@@ -27,7 +25,13 @@ function reducer(state, action) {
 export const TableScreen = () => {
 	const [data, setData] = useState(null);
 	const [editingEntry, setEditingEntry] = useState(null);
-	const [state, dispatch] = useReducer(reducer, initialState);
+	const [state, dispatch] = useReducer(reducer, {
+		code: '',
+		email: '',
+		phone: '',
+		date: '',
+		status: '',
+	});
 
 	useEffect(() => {
 		fetch(ENDPOINTS.LOGIN_HISTORY)
@@ -60,7 +64,11 @@ export const TableScreen = () => {
 
 	const handleEdit = (entry) => {
 		setEditingEntry(entry);
-		dispatch({ type: 'SET_FIELD', field: 'code', value: entry.code || 'No code' });
+		dispatch({
+			type: 'SET_FIELD',
+			field: 'code',
+			value: entry.code || 'No code',
+		});
 		dispatch({ type: 'SET_FIELD', field: 'email', value: entry.email });
 		dispatch({ type: 'SET_FIELD', field: 'phone', value: entry.phone });
 		dispatch({ type: 'SET_FIELD', field: 'date', value: entry.date });
@@ -200,9 +208,7 @@ export const TableScreen = () => {
 													</button>
 													<button
 														onClick={() =>
-															handleCancel(
-																entry
-															)
+															handleCancel(entry)
 														}
 													>
 														Cancel
@@ -243,7 +249,9 @@ export const TableScreen = () => {
 					</table>
 				</div>
 			) : (
-				<h1 className={styles.title}>No recent login records to display!</h1>
+				<h1 className={styles.title}>
+					No recent login records to display!
+				</h1>
 			)}
 		</>
 	);

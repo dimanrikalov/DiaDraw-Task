@@ -55,9 +55,8 @@ export const VerifyAccount = ({ toVerify }) => {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-				<button onClick={() => navigate(-1)}>
+				<button className={styles.arrow} onClick={() => navigate(-1)}>
 						<img
-							className={styles.arrow}
 							src={BackArrow}
 							alt="back-arrow"
 						/>

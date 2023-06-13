@@ -92,6 +92,7 @@ export const LoginScreen = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		console.log('phone made a request')
 		dispatchError({ type: EVENTS.ERROR_RESET });
 
 		if (state.phone.length !== 10) {
@@ -146,9 +147,8 @@ export const LoginScreen = () => {
 					<div className={styles.progress}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<button onClick={() => navigate(-1)}>
+					<button className={styles.arrow} onClick={() => navigate(-1)}>
 						<img
-							className={styles.arrow}
 							src={BackArrow}
 							alt="back-arrow"
 						/>
