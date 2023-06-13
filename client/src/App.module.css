@@ -25,17 +25,18 @@
 	line-height: 140.62%;
 }
 
-.header a {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 0px;
-  text-decoration: none;
-  color: #333333;
-  background-color: var(--yellow-help);
-  border-radius: 4px;
-  padding: 21px 32px;
+.header button {
+	border: none;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 0px;
+	text-decoration: none;
+	color: #333333;
+	background-color: var(--yellow-help);
+	border-radius: 4px;
+	padding: 21px 32px;
 }
 
 @media only screen and (max-width: 460px) {

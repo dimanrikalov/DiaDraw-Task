@@ -2,18 +2,22 @@ import styles from './App.module.css';
 import { HomeScreen } from './components/HomeScreen/HomeScreen';
 import { LoginScreen } from './components/LoginScreen/LoginScreen';
 import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
-import { UserScreen } from './components/UserScreen/UserScreen';
 import { TableScreen } from './components/TableScreen/TableScreen';
 import { ConfirmationScreen } from './components/ConfirmationScreen/ConfirmationScreen';
 
 import {
 	createBrowserRouter,
 	createRoutesFromElements,
+	Navigate,
 	Outlet,
 	Route,
 	RouterProvider,
 } from 'react-router-dom';
 
+const RequireAuth = () => {
+	const isAuthenticated = !!localStorage.getItem('id');
+	return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+};
 
 function App() {
 	const router = createBrowserRouter(
@@ -25,15 +29,15 @@ function App() {
 				<Route
 					path="/verify-mobile"
 					element={<VerifyAccount toVerify={'mobile'} />}
-				/>{' '}
+				/>
 				<Route
 					path="/verify-email"
 					element={<VerifyAccount toVerify={'email'} />}
-				/>{' '}
-				<Route path="/confirm" element={<ConfirmationScreen />} />{' '}
-				{/* add route guard */}
-				<Route path="/login-entries" element={<TableScreen />} />{' '}
-				{/* add route guard */}
+				/>
+				<Route element={<RequireAuth/>}>
+					<Route path="/confirm" element={<ConfirmationScreen />} />
+					<Route path="/login-entries" element={<TableScreen />} />
+				</Route>
 			</Route>
 		)
 	);
@@ -42,7 +46,7 @@ function App() {
 		<div className={styles.App}>
 			<header className={styles.header}>
 				<p className={styles.title}>Website</p>
-				<a href="#">NEED HELP?</a>
+				<button>NEED HELP?</button>
 			</header>
 			<main>
 				<RouterProvider router={router} />
