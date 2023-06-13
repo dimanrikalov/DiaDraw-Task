@@ -70,8 +70,8 @@ let timeout = null;
 	});
 
 	app.get('/login-entries', (req, res) => {
-		console.log('All login attempts:');
-		loginHistory.forEach((x) => console.log(x));
+		// console.log('All login attempts:');
+		// loginHistory.forEach((x) => console.log(x));
 		return res.json(loginHistory);
 	});
 
@@ -86,8 +86,7 @@ let timeout = null;
 			const index = loginHistory.findIndex(
 				(x) =>
 					x.email === req.body.email &&
-					x.password === req.body.password &&
-					x.agree === req.body.agree &&
+					x.phone === req.body.phone &&
 					x.date === req.body.date &&
 					x.status === req.body.status
 			);
@@ -104,8 +103,7 @@ let timeout = null;
 		const index = loginHistory.findIndex(
 			(x) =>
 				x.email === before.email &&
-				x.password === before.password &&
-				x.agree === before.agree &&
+				x.phone === before.phone &&
 				x.date === before.date &&
 				x.status === before.status
 		);
