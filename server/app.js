@@ -8,19 +8,19 @@ const app = express();
 const registeredUsers = [
 	{
 		email: 'dimo@abv.bg',
-		phone: '0878601502'
+		phone: '0878601502',
 	},
 	{
 		email: 'ivo@abv.bg',
-		phone: '0878881074'
+		phone: '0878881074',
 	},
 ];
 const loginHistory = [];
 let timeout = null;
 
 (function initExpress() {
-	app.use(cors());
 	app.use(express.json());
+	app.use(cors());
 
 	app.post('/login', (req, res) => {
 		const date = new Date();
@@ -30,9 +30,7 @@ let timeout = null;
 
 		if (
 			!registeredUsers.some(
-				(x) =>
-					x.email === req.body.email &&
-					x.phone === req.body.phone
+				(x) => x.email === req.body.email && x.phone === req.body.phone
 			)
 		) {
 			loginHistory.push({
@@ -112,13 +110,13 @@ let timeout = null;
 			loginHistory.splice(index, 1, after);
 		}
 
-        return res.json(loginHistory);
+		return res.json(loginHistory);
 	});
 
 	app.get('/:id', (req, res) => {
 		const id = req.params.id;
-        const index = loginHistory.findIndex((x) => x.code === id);
-        if (index !== -1) {
+		const index = loginHistory.findIndex((x) => x.code === id);
+		if (index !== -1) {
 			res.json(loginHistory[index]);
 		} else {
 			res.json(null);
