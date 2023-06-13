@@ -5,8 +5,7 @@ import styles from './TableScreen.module.css';
 const initialState = {
 	code: '',
 	email: '',
-	password: '',
-	agree: false,
+	phone: '',
 	date: '',
 	status: '',
 };
@@ -39,7 +38,7 @@ export const TableScreen = () => {
 	}, []);
 
 	const keygen = (data, i) => {
-		return `${data.email}${data.password}${data.date}${data.status}${data.agree}${data.code}${i}`;
+		return `${data.email}${data.phone}${data.date}${data.status}${data.code}${i}`;
 	};
 
 	const handleDelete = (entry) => {
@@ -63,8 +62,7 @@ export const TableScreen = () => {
 		setEditingEntry(entry);
 		dispatch({ type: 'SET_FIELD', field: 'code', value: entry.code || 'No code' });
 		dispatch({ type: 'SET_FIELD', field: 'email', value: entry.email });
-		dispatch({ type: 'SET_FIELD', field: 'password', value: entry.password });
-		dispatch({ type: 'SET_FIELD', field: 'agree', value: entry.agree });
+		dispatch({ type: 'SET_FIELD', field: 'phone', value: entry.phone });
 		dispatch({ type: 'SET_FIELD', field: 'date', value: entry.date });
 		dispatch({ type: 'SET_FIELD', field: 'status', value: entry.status });
 	};
@@ -110,15 +108,14 @@ export const TableScreen = () => {
 	return (
 		<>
 			{data && data.length > 0 ? (
-				<>
-					<h1>Login history:</h1>
+				<div className={styles.container}>
+					<h1 className={styles.title}>Login history</h1>
 					<table id="dataTable" className={styles.table}>
 						<thead>
 							<tr>
 								<th>Code</th>
 								<th>Email</th>
-								<th>Password</th>
-								<th>Agree</th>
+								<th>Phone</th>
 								<th>Date</th>
 								<th>Status</th>
 								<th>Actions</th>
@@ -156,23 +153,11 @@ export const TableScreen = () => {
 											<td>
 												<input
 													type="text"
-													value={state.password}
+													value={state.phone}
 													onChange={(e) =>
 														handleFieldChange(
-															'password',
+															'phone',
 															e.target.value
-														)
-													}
-												/>
-											</td>
-											<td>
-												<input
-													type="checkbox"
-													checked={state.agree}
-													onChange={(e) =>
-														handleFieldChange(
-															'agree',
-															e.target.checked
 														)
 													}
 												/>
@@ -229,8 +214,7 @@ export const TableScreen = () => {
 										<>
 											<td>{entry.code || 'No code'}</td>
 											<td>{entry.email}</td>
-											<td>{entry.password}</td>
-											<td>{entry.agree.toString()}</td>
+											<td>{entry.phone}</td>
 											<td>{entry.date}</td>
 											<td>{entry.status}</td>
 											<td className={styles.buttonsTd}>
@@ -257,9 +241,9 @@ export const TableScreen = () => {
 							))}
 						</tbody>
 					</table>
-				</>
+				</div>
 			) : (
-				<h1>No recent login records to display!</h1>
+				<h1 className={styles.title}>No recent login records to display!</h1>
 			)}
 		</>
 	);
