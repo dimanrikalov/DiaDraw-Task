@@ -249,7 +249,7 @@ export const TableScreen = () => {
 				</div>
 			) : (
 				<h1 className={styles.title}>
-					No recent login records to display!
+					No recent login entries to display!
 				</h1>
 			)}
 		</>
