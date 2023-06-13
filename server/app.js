@@ -7,12 +7,12 @@ const app = express();
 
 const registeredUsers = [
 	{
-		email: 'dimo@abv.bg',
-		phone: '0878601502',
+		email: 'john.doe@abv.bg',
+		phone: '0898696969',
 	},
 	{
-		email: 'ivo@abv.bg',
-		phone: '0878881074',
+		email: 'hristo.diadraw@mail.com',
+		phone: '0123456789',
 	},
 ];
 const loginHistory = [];
