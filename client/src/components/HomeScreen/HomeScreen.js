@@ -1,22 +1,39 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './HomeScreen.module.css';
 
+//wtf is this importing method?
+import newUserImage from '../../imgs/user-x.png';
+import oldUserImage from '../../imgs/user-box.png';
+
 export const HomeScreen = () => {
+	const navigate = useNavigate();
 
-    const navigate = useNavigate();
+	const clickHandler = (e) => {
+		navigate('/login');
+	};
 
-    const clickHandler = (e) => {
-        navigate(`/${e.target.innerText.toLowerCase()}`);
-    }
-
-    return (
-        <div className={styles.container}>
-            <h1>Welcome</h1>
-            <div className={styles.buttons}>
-                <a className={styles.button} onClick={clickHandler}>Login</a>
-                <a className={styles.button} onClick={clickHandler}>Register</a>
-            </div>
-
-        </div>
-    )
-}
+	return (
+		<div className={styles.container}>
+			<div className={styles.titleDiv}>
+				<h3>Welcome to Website</h3>
+				<h5>Keeping Communities Connected</h5>
+			</div>
+			<div className={styles.options}>
+				<div className={styles.option}>
+					<img className={styles.img} src={newUserImage} alt="new-user" />
+					<div className={styles.rightSide}>
+						<h4>I'm new user</h4>
+						<a onClick={clickHandler}>CREATE ACCOUNT</a>
+					</div>
+				</div>
+				<div className={styles.option}>
+					<img className={styles.img} src={oldUserImage} alt="old-user" />
+					<div className={styles.rightSide}>
+						<h4>I have an account</h4>
+						<a onClick={clickHandler}>LOGIN NOW</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
