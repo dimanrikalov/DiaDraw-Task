@@ -37,6 +37,7 @@
 	background-color: var(--yellow-help);
 	border-radius: 4px;
 	padding: 21px 32px;
+	cursor: pointer;
 }
 
 @media only screen and (max-width: 460px) {
