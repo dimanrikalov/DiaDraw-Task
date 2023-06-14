@@ -1,6 +1,6 @@
 import styles from './App.module.css';
 import { HomeScreen } from './components/HomeScreen/HomeScreen';
-import { LoginScreen } from './components/LoginScreen/LoginScreen';
+import { CredentialsInputScreen } from './components/CredentialsInputScreen/CredentialsInputScreen';
 import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
 import { TableScreen } from './components/TableScreen/TableScreen';
 import { ConfirmationScreen } from './components/ConfirmationScreen/ConfirmationScreen';
@@ -24,8 +24,8 @@ function App() {
 		createRoutesFromElements(
 			<Route path="/" element={<Root />}>
 				<Route index element={<HomeScreen />} />
-				<Route path="/auth/login" element={<LoginScreen />} />
-				<Route path="/auth/register" element={<LoginScreen />} />
+				<Route path="/auth/login" element={<CredentialsInputScreen />} />
+				<Route path="/auth/register" element={<CredentialsInputScreen />} />
 				<Route
 					path="/auth/verify-mobile"
 					element={<VerifyAccount toVerify={'mobile'} />}
