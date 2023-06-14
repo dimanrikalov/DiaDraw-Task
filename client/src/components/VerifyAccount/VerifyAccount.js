@@ -33,15 +33,16 @@ export const VerifyAccount = ({ toVerify }) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data) {
-					setError(null);
-					localStorage.clear();
-					sessionStorage.clear();
-					localStorage.setItem('id', data);
-					navigate('/auth/confirm');
-				} else {
-					setError('Invalid code! Please try again!');
+				if (data.error) {
+					setError(data.error);
+					return;
 				}
+
+				setError(null);
+				localStorage.clear();
+				sessionStorage.clear();
+				localStorage.setItem('id', data);
+				navigate('/auth/confirm');
 			});
 	};
 
