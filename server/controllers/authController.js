@@ -2,50 +2,133 @@ const router = require('express').Router();
 const loginHistory = require('../data/loginHistory');
 const registeredUsers = require('../data/registeredUsers');
 const randomNumberGenerator = require('../services/authService');
+const pendingRegistrations = require('../data/pendingRegistrations');
+
+let timeout = null;
 
 router.post('/login', (req, res) => {
-    const date = new Date();
-    const dateString = `${
-        (date.toLocaleDateString(), date.toLocaleTimeString())
-    }`;
+	const date = new Date();
+	const dateString = `${
+		(date.toLocaleDateString(), date.toLocaleTimeString())
+	}`;
 
-    if (
-        !registeredUsers.some(
-            (x) => x.email === req.body.email && x.phone === req.body.phone
-        )
-    ) {
-        loginHistory.push({
-            ...req.body,
-            date: dateString,
-            status: 'failed',
-        });
-        return res.json({ error: 'Invalid username or password!' });
-    }
+	if (
+		!registeredUsers.some(
+			(x) => x.email === req.body.email && x.phone === req.body.phone
+		)
+	) {
+		loginHistory.push({
+			...req.body,
+			date: dateString,
+			status: 'failed',
+		});
+		return res.json({ error: 'Invalid username or password!' });
+	}
 
-    const number = randomNumberGenerator(); //for the verification later
-    loginHistory.push({
-        code: number.toString(),
-        ...req.body,
-        date: dateString,
-        status: 'pending',
-    });
-    console.log(number);
-    res.json(loginHistory[loginHistory.length - 1]);
+	let number = randomNumberGenerator(); //for the verification later
+	while (loginHistory.some((x) => x.code === number)) {
+		//only unique codes within the array
+		number = randomNumberGenerator();
+	}
+
+	loginHistory.push({
+		code: number.toString(),
+		...req.body,
+		date: dateString,
+		status: 'pending',
+	});
+	console.log(number);
+	return res.json(loginHistory[loginHistory.length - 1]);
+});
+
+router.post('/register', (req, res) => {
+	const data = req.body;
+	const phoneAlreadyTaken = registeredUsers.some(
+		(x) => x.phone === data.phone
+	);
+	const emailAlreadyTaken = registeredUsers.some(
+		(x) => x.email === data.email
+	);
+
+	//validate the data
+	if (data.phone.length !== 10) {
+		return res.json({ error: 'Invalid phone number!' });
+	}
+
+	if (!data.email.includes('@')) {
+		return res.json({ error: 'Invalid email!' });
+	}
+
+	//don't want to give too much info to the user
+	if (phoneAlreadyTaken || emailAlreadyTaken) {
+		return res.json({ error: 'Phone number / email already taken!' });
+	}
+
+	//generate a number for the next verification step
+	const date = new Date();
+	const dateString = `${
+		(date.toLocaleDateString(), date.toLocaleTimeString())
+	}`;
+	const number = randomNumberGenerator();
+
+	const loginEntry = {
+		code: number.toString(),
+		...req.body,
+		date: dateString,
+		status: 'pending',
+	};
+
+	loginHistory.push(loginEntry);
+
+	const registrationEntry = {
+		code: number.toString(),
+		...req.body,
+	};
+
+	pendingRegistrations.push(registrationEntry);
+
+	//if within 1 minute there is no code entered the registration process fails
+	timeout = setTimeout(() => {
+		loginEntry.status = 'failed';
+		const index = pendingRegistrations.findIndex(
+			(x) => x === registrationEntry
+		);
+		pendingRegistrations.splice(index, 1);
+	}, 60000);
+
+	return res.json({ code: number });
 });
 
 router.post('/verify', (req, res) => {
-    const isValid = loginHistory.some(
-        (x) => req.body.code === x.code && x.status === 'pending'
-    ); //find if there is a pending login attempt with this code (idk how secure it is)
+	const loginEntryIndex = loginHistory.findIndex(
+		(x) => x.code === req.body.code.toString() && x.status === 'pending'
+	); //find if there is a pending login attempt with this code
 
-    if (isValid) {
-        loginHistory[loginHistory.length - 1].status = 'successful';
-        console.log('login successful');
-        res.json(req.body.code);
-    } else {
-        console.log('login failed');
-        res.json(null);
-    }
+	if (loginEntryIndex === -1) {
+		console.log('Verification failed!');
+		return res.json({ error: 'Verification failed!' });
+	}
+
+	clearTimeout(timeout);
+
+	const registrationEntryIndex = pendingRegistrations.findIndex(
+		(x) => x.code === req.body.code
+	);
+
+	if (registrationEntryIndex !== -1) {
+		const registrationData = pendingRegistrations.splice(
+			registrationEntryIndex,
+			1
+		)[0];
+		registeredUsers.push(registrationData);
+	}
+
+	loginHistory[loginEntryIndex].status = 'successful';
+
+	registrationEntryIndex
+		? console.log('registration successful')
+		: console.log('login successful');
+	res.json(loginHistory[loginEntryIndex]);
 });
 
 module.exports = router;
