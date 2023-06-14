@@ -1,21 +1,17 @@
-import styles from './LoginScreen.module.css';
-import { useEffect, useReducer, useState } from 'react';
+import { useReducer } from 'react';
 import ENDPOINTS from '../../endpoints';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-
-import BackArrow from '../../imgs/back-arrow.png';
 import PhoneImg from '../../imgs/phone.png';
+import styles from './LoginScreen.module.css';
+import { useNavigate } from 'react-router-dom';
+import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
+import { useErrorReducer } from '../../hooks/useErrorReducer';
+import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
 const EVENTS = {
+	RESET: 'RESET',
 	EMAIL_CHANGE: 'EMAIL_CHANGE',
 	PHONE_CHANGE: 'PHONE_CHANGE',
-	RESET: 'RESET',
-
-	ERROR_PHONE: 'ERROR_PHONE',
-	ERROR_EMAIL: 'ERROR_EMAIL',
-	ERROR_CREDENTIALS: 'ERROR_CREDENTIALS',
-	ERROR_RESET: 'ERROR_RESET',
 };
 
 const reducer = (state, action) => {
@@ -40,85 +36,33 @@ const reducer = (state, action) => {
 	}
 };
 
-const errorReducer = (state, action) => {
-	switch (action.type) {
-		case EVENTS.ERROR_PHONE:
-			return {
-				...state,
-				phoneError: action.errorMessage,
-			};
-		case EVENTS.ERROR_EMAIL:
-			return {
-				...state,
-				emailError: action.errorMessage,
-			};
-		case EVENTS.ERROR_CREDENTIALS:
-			return {
-				...state,
-				loginError: action.errorMessage,
-			};
-		case EVENTS.ERROR_RESET:
-			return {
-				emailError: false,
-				phoneError: false,
-				loginError: false,
-			};
-		default:
-			return state;
-	}
-};
-
 export const LoginScreen = () => {
 	const navigate = useNavigate();
-
-	const [style, setStyle] = useState({});
-
 	const [state, dispatch] = useReducer(reducer, {
 		email: '',
 		phone: '',
 	});
+	const { style } = useLoadingEffect('35%');
+	const { errorsState, dispatchError, errorEvents } = useErrorReducer();
 
-	const [errorsState, dispatchError] = useReducer(errorReducer, {
-		emailError: false,
-		phoneError: false,
-		loginError: false,
-	});
-
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			setStyle({width: '35%'});
-		}, 100);
-
-		return () => {
-			clearTimeout(timeout);
-		}
-	}, []);
-
-
-	const handleEmailChange = (e) => {
-		dispatch({ type: EVENTS.EMAIL_CHANGE, value: e.target.value });
-	};
-
-	const handlePhoneChange = (e) => {
-		dispatch({ type: EVENTS.PHONE_CHANGE, value: e.target.value });
+	const handleInputChange = (e, eventType) => {
+		dispatch({ type: eventType, value: e.target.value });
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatchError({ type: EVENTS.ERROR_RESET });
+		dispatchError({ type: errorEvents.ERROR_RESET });
 
 		if (state.phone.length !== 10) {
 			dispatchError({
-				type: EVENTS.ERROR_PHONE,
-				errorMessage: 'A valid phone number is required!',
+				type: errorEvents.ERROR_PHONE,
 			});
 			return;
 		}
 
 		if (!state.email) {
 			dispatchError({
-				type: EVENTS.ERROR_EMAIL,
-				errorMessage: 'A valid e-mail address is required!',
+				type: errorEvents.ERROR_EMAIL,
 			});
 			return;
 		}
@@ -137,17 +81,17 @@ export const LoginScreen = () => {
 				console.log(data);
 
 				if (data.error) {
-					dispatchError({ type: EVENTS.ERROR_RESET });
+					dispatchError({ type: errorEvents.ERROR_RESET });
 					dispatchError({
-						type: EVENTS.ERROR_CREDENTIALS,
+						type: errorEvents.ERROR_RESPONSE,
 						errorMessage: data.error,
 					});
 					return;
 				}
 				dispatch({ type: EVENTS.RESET }); //clear the fields
-				sessionStorage.setItem('email', state.email);
+				sessionStorage.setItem('email', state.email); //adding them for the next step
 				sessionStorage.setItem('phone', state.phone);
-				navigate('/verify-mobile');
+				navigate('/auth/verify-mobile');
 			});
 	};
 
@@ -159,11 +103,11 @@ export const LoginScreen = () => {
 					<div className={styles.progress} style={style}></div>
 				</div>
 				<div className={styles.titleDiv}>
-					<button className={styles.arrow} onClick={() => navigate(-1)}>
-						<img
-							src={BackArrow}
-							alt="back-arrow"
-						/>
+					<button
+						className={styles.arrow}
+						onClick={() => navigate(-1)}
+					>
+						<img src={BackArrow} alt="back-arrow" />
 					</button>
 					<h5>Enter your mobile no. & email id</h5>
 				</div>
@@ -177,7 +121,9 @@ export const LoginScreen = () => {
 							id="phone"
 							placeholder="Enter your mobile no."
 							value={state.phone}
-							onChange={handlePhoneChange}
+							onChange={(e) =>
+								handleInputChange(e, EVENTS.PHONE_CHANGE)
+							}
 						/>
 						{errorsState.phoneError && (
 							<img
@@ -200,7 +146,9 @@ export const LoginScreen = () => {
 							id="email"
 							placeholder="Enter your email id"
 							value={state.email}
-							onChange={handleEmailChange}
+							onChange={(e) =>
+								handleInputChange(e, EVENTS.EMAIL_CHANGE)
+							}
 						/>
 						{errorsState.emailError && (
 							<img
@@ -223,8 +171,9 @@ export const LoginScreen = () => {
 					<button>CREATE ACCOUNT</button>
 				</form>
 				<p>
-					By signing up, I agree to the <button>Privacy Policy</button>{' '}
-					& <button>Terms of Use</button>
+					By signing up, I agree to the{' '}
+					<button>Privacy Policy</button> &{' '}
+					<button>Terms of Use</button>
 				</p>
 			</div>
 		</div>

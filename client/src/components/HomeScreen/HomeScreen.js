@@ -1,7 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import styles from './HomeScreen.module.css';
-
-//wtf is this importing method?
+import { useNavigate } from 'react-router-dom';
 import newUserImage from '../../imgs/user-x.png';
 import oldUserImage from '../../imgs/user-box.png';
 
@@ -16,17 +14,29 @@ export const HomeScreen = () => {
 			</div>
 			<div className={styles.options}>
 				<div className={styles.option}>
-					<img className={styles.img} src={newUserImage} alt="new-user" />
+					<img
+						className={styles.img}
+						src={newUserImage}
+						alt="new-user"
+					/>
 					<div className={styles.rightSide}>
 						<h4>I'm new user</h4>
-						<button onClick={()=>navigate('/register')}>CREATE ACCOUNT</button>
+						<button onClick={() => navigate('/auth/register')}>
+							CREATE ACCOUNT
+						</button>
 					</div>
 				</div>
 				<div className={styles.option}>
-					<img className={styles.img} src={oldUserImage} alt="old-user" />
+					<img
+						className={styles.img}
+						src={oldUserImage}
+						alt="old-user"
+					/>
 					<div className={styles.rightSide}>
 						<h4>I have an account</h4>
-						<button onClick={()=>navigate('/login')}>LOGIN NOW</button>
+						<button onClick={() => navigate('/auth/login')}>
+							LOGIN NOW
+						</button>
 					</div>
 				</div>
 			</div>

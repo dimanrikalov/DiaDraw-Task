@@ -1,28 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import styles from './VerifyAccount.module.css';
+import React, { useState } from 'react';
 import ENDPOINTS from '../../endpoints';
 import { useNavigate } from 'react-router-dom';
+import styles from './VerifyAccount.module.css';
+import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
-import BackArrow from '../../imgs/back-arrow.png';
 import PhoneImg from '../../imgs/phone.png';
-import ErrorIcon from '../../imgs/input-error.png';
 import Envelope from '../../imgs/envelope.png';
+import BackArrow from '../../imgs/back-arrow.png';
+import ErrorIcon from '../../imgs/input-error.png';
 
 export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();
-	const [style, setStyle] = useState({});
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
-
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			setStyle({width: '65%'});
-		}, 100);
-
-		return () => {
-			clearTimeout(timeout);
-		}
-	}, []);
+	const { style } = useLoadingEffect('65%');
 
 	const handleChange = (e) => {
 		setInputValue(e.target.value);
@@ -47,7 +38,7 @@ export const VerifyAccount = ({ toVerify }) => {
 					localStorage.clear();
 					sessionStorage.clear();
 					localStorage.setItem('id', data);
-					navigate('/confirm');
+					navigate('/auth/confirm');
 				} else {
 					setError('Invalid code! Please try again!');
 				}
@@ -66,11 +57,11 @@ export const VerifyAccount = ({ toVerify }) => {
 					<div className={styles.progress} style={style}></div>
 				</div>
 				<div className={styles.titleDiv}>
-				<button className={styles.arrow} onClick={() => navigate(-1)}>
-						<img
-							src={BackArrow}
-							alt="back-arrow"
-						/>
+					<button
+						className={styles.arrow}
+						onClick={() => navigate(-1)}
+					>
+						<img src={BackArrow} alt="back-arrow" />
 					</button>
 					{toVerify === 'mobile' ? (
 						<h5>
@@ -99,7 +90,9 @@ export const VerifyAccount = ({ toVerify }) => {
 				)}
 				<form className={styles.form} onSubmit={handleSubmit}>
 					<div className={styles.inputDiv}>
-						<label htmlFor="verificationCode">VERIFICATION CODE</label>
+						<label htmlFor="verificationCode">
+							VERIFICATION CODE
+						</label>
 						<input
 							type="tel"
 							name="verificationCode"
@@ -131,11 +124,15 @@ export const VerifyAccount = ({ toVerify }) => {
 					<p>OR</p>
 					<p>
 						{toVerify === 'mobile' ? (
-							<button onClick={()=>navigate('/verify-email')}>
+							<button
+								onClick={() => navigate('/auth/verify-email')}
+							>
 								Send verification code on email
 							</button>
 						) : (
-							<button onClick={()=>navigate('/verify-mobile')}>
+							<button
+								onClick={() => navigate('/auth/verify-mobile')}
+							>
 								Send verification code on mobile no.
 							</button>
 						)}
