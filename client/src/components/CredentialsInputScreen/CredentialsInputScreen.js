@@ -1,10 +1,10 @@
 import { useReducer } from 'react';
 import ENDPOINTS from '../../endpoints';
 import PhoneImg from '../../imgs/phone.png';
-import { useLocation, useNavigate } from 'react-router-dom';
 import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
 import styles from './CredentialsInputScreen.module.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useErrorReducer } from '../../hooks/useErrorReducer';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
@@ -38,7 +38,7 @@ const reducer = (state, action) => {
 
 export const CredentialsInputScreen = () => {
 	const location = useLocation();
-	const operation = location.pathname.split('/')[2];
+	const operation = location.pathname.split('/').pop();
 
 	const navigate = useNavigate();
 	const [state, dispatch] = useReducer(reducer, {
@@ -50,6 +50,36 @@ export const CredentialsInputScreen = () => {
 
 	const handleInputChange = (e, eventType) => {
 		dispatch({ type: eventType, value: e.target.value });
+	};
+
+	const makeFetchRequest = (endpoint) => {
+		fetch(endpoint, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				...state,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.error) {
+					dispatchError({ type: errorEvents.ERROR_RESET });
+					dispatchError({
+						type: errorEvents.ERROR_RESPONSE,
+						errorMessage: data.error,
+					});
+					return;
+				}
+
+				console.log(data.code);
+
+				dispatch({ type: EVENTS.RESET }); //clear the fields
+				sessionStorage.setItem('email', state.email); //saving them for the next step
+				sessionStorage.setItem('phone', state.phone);
+				navigate('/auth/verify-mobile');
+			});
 	};
 
 	const handleSubmit = (e) => {
@@ -71,60 +101,9 @@ export const CredentialsInputScreen = () => {
 		}
 
 		if (operation === 'login') {
-			fetch(ENDPOINTS.LOGIN, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					...state,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					console.log(data);
-
-					if (data.error) {
-						dispatchError({ type: errorEvents.ERROR_RESET });
-						dispatchError({
-							type: errorEvents.ERROR_RESPONSE,
-							errorMessage: data.error,
-						});
-						return;
-					}
-					dispatch({ type: EVENTS.RESET }); //clear the fields
-					sessionStorage.setItem('email', state.email); //adding them for the next step
-					sessionStorage.setItem('phone', state.phone);
-					navigate('/auth/verify-mobile');
-				});
+			makeFetchRequest(ENDPOINTS.LOGIN);
 		} else if (operation === 'register') {
-			fetch(ENDPOINTS.REGISTER, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					...state,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					if (data.error) {
-						dispatchError({ type: errorEvents.ERROR_RESET });
-						dispatchError({
-							type: errorEvents.ERROR_RESPONSE,
-							errorMessage: data.error,
-						});
-						return;
-					}
-					
-					console.log(data.code);
-					
-					dispatch({ type: EVENTS.RESET }); //clear the fields
-					sessionStorage.setItem('email', state.email); //saving them for the next step
-					sessionStorage.setItem('phone', state.phone);
-					navigate('/auth/verify-mobile');
-				});
+			makeFetchRequest(ENDPOINTS.REGISTER);
 		}
 	};
 

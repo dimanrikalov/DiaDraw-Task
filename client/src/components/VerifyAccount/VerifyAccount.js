@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import ENDPOINTS from '../../endpoints';
-import { useNavigate } from 'react-router-dom';
-import styles from './VerifyAccount.module.css';
-import { useLoadingEffect } from '../../hooks/useLoadingEffect';
-
 import PhoneImg from '../../imgs/phone.png';
 import Envelope from '../../imgs/envelope.png';
+import { useNavigate } from 'react-router-dom';
+import styles from './VerifyAccount.module.css';
 import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
+import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
 export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();
@@ -39,7 +38,6 @@ export const VerifyAccount = ({ toVerify }) => {
 				}
 
 				setError(null);
-				localStorage.clear();
 				sessionStorage.clear();
 				localStorage.setItem('id', data);
 				navigate('/auth/confirm');

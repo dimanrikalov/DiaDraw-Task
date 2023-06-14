@@ -1,6 +1,6 @@
-import { useEffect, useReducer, useState } from 'react';
 import ENDPOINTS from '../../endpoints';
 import styles from './TableScreen.module.css';
+import { useEffect, useReducer, useState } from 'react';
 
 function reducer(state, action) {
 	switch (action.type) {
