@@ -7,6 +7,11 @@ export const ConfirmationScreen = () => {
 	const navigate = useNavigate();
 	const { style } = useLoadingEffect('100%');
 
+	const logoutHandler = () => {
+		localStorage.removeItem('id');
+		navigate('/');
+	};
+
 	return (
 		<div className={styles.container}>
 			<h3>Verification successful!</h3>
@@ -20,7 +25,10 @@ export const ConfirmationScreen = () => {
 					onClick={() => navigate('/login-entries')}
 					className={styles.button}
 				>
-					View Login Entries
+					VIEW LOGIN ENTRIES
+				</button>
+				<button onClick={logoutHandler} className={styles.button}>
+					LOGOUT
 				</button>
 			</div>
 		</div>

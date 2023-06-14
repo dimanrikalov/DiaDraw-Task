@@ -1,5 +1,6 @@
 import ENDPOINTS from '../../endpoints';
 import styles from './TableScreen.module.css';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useReducer, useState } from 'react';
 
 function reducer(state, action) {
@@ -23,6 +24,7 @@ function reducer(state, action) {
 }
 
 export const TableScreen = () => {
+	const navigate = useNavigate();
 	const [data, setData] = useState(null);
 	const [editingEntry, setEditingEntry] = useState(null);
 	const [state, dispatch] = useReducer(reducer, {
@@ -114,9 +116,9 @@ export const TableScreen = () => {
 	};
 
 	return (
-		<>
-			{data && data.length > 0 ? (
-				<div className={styles.container}>
+		<div className={styles.wrapper}>
+			<div className={styles.container}>
+				{data && data.length > 0 ? (
 					<table id="dataTable" className={styles.table}>
 						<thead>
 							<tr>
@@ -246,12 +248,13 @@ export const TableScreen = () => {
 							))}
 						</tbody>
 					</table>
-				</div>
-			) : (
-				<h1 className={styles.title}>
-					No recent login entries to display!
-				</h1>
-			)}
-		</>
+				) : (
+					<h1 className={styles.title}>
+						No recent login entries to display!
+					</h1>
+				)}
+			</div>
+			<button className={styles.backButton} onClick={() => navigate(-1)}>BACK</button>
+		</div>
 	);
 };

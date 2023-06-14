@@ -30,7 +30,7 @@ router.post('/register', (req, res) => {
 	}
 
 	const number = randomNumberGenerator();
-	while (loginHistory.some((x) => x.code === number)) {
+	while (loginHistory.some((x) => x.code === number.toString())) {
 		//only unique codes within the array
 		number = randomNumberGenerator();
 	}
@@ -66,7 +66,7 @@ router.post('/register', (req, res) => {
 		pendingRegistrations.splice(index, 1);
 	}, 60000);
 
-	return res.json({ code: number });
+	return res.json({ code: number.toString() });
 });
 
 router.post('/login', (req, res) => {
@@ -91,7 +91,7 @@ router.post('/login', (req, res) => {
 	}
 
 	let number = randomNumberGenerator(); //for the verification later
-	while (loginHistory.some((x) => x.code === number)) {
+	while (loginHistory.some((x) => x.code === number.toString())) {
 		//only unique codes within the array
 		number = randomNumberGenerator();
 	}
@@ -99,7 +99,7 @@ router.post('/login', (req, res) => {
 	loginEntry.status = 'pending';
 	loginEntry.code = number.toString();
 	loginHistory.push(loginEntry);
-	console.log(number);
+
 	return res.json(loginEntry);
 });
 
@@ -135,7 +135,7 @@ router.post('/verify', (req, res) => {
 	console.log(pendingRegistrations);
 	console.log(registeredUsers);
 
-	registrationEntryIndex
+	registrationEntryIndex !== -1
 		? console.log('registration successful')
 		: console.log('login successful');
 	res.json(loginHistory[loginEntryIndex]);

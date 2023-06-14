@@ -21,7 +21,7 @@ const RequireAuth = () => {
 
 const RequireNotAuth = () => {
 	const isAuthenticated = !!localStorage.getItem('id');
-	return isAuthenticated ? <Navigate to="/" /> : <Outlet />;
+	return isAuthenticated ? <Navigate to="/auth/confirm" /> : <Outlet />;
 };
 
 function App() {
@@ -54,6 +54,7 @@ function App() {
 					/>
 					<Route path="/login-entries" element={<TableScreen />} />
 				</Route>
+				<Route path="*" element={<HomeScreen />} />
 			</Route>
 		)
 	);
