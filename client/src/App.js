@@ -24,6 +24,17 @@ const RequireNotAuth = () => {
 	return isAuthenticated ? <Navigate to="/auth/confirm" /> : <Outlet />;
 };
 
+const RequireCredentialsInSessionStorage = () => {
+	const isAuthenticated = localStorage.getItem('id');
+	const isVerifying = sessionStorage.getItem('phone') && sessionStorage.getItem('email');
+	if(isAuthenticated) {
+		return <Navigate to="/auth/confirm"/>
+	} else if(isVerifying) {
+		return <Outlet />
+	}
+	return <Navigate to="/"/>
+}
+
 function App() {
 	const router = createBrowserRouter(
 		createRoutesFromElements(
@@ -38,14 +49,16 @@ function App() {
 						path="/auth/register"
 						element={<CredentialsInputScreen />}
 					/>
-					<Route
-						path="/auth/verify-mobile"
-						element={<VerifyAccount toVerify={'mobile'} />}
-					/>
-					<Route
-						path="/auth/verify-email"
-						element={<VerifyAccount toVerify={'email'} />}
-					/>
+					<Route element={<RequireCredentialsInSessionStorage />}>
+						<Route
+							path="/auth/verify-mobile"
+							element={<VerifyAccount toVerify={'mobile'} />}
+						/>
+						<Route
+							path="/auth/verify-email"
+							element={<VerifyAccount toVerify={'email'} />}
+						/>
+					</Route>
 				</Route>
 				<Route element={<RequireAuth />}>
 					<Route
