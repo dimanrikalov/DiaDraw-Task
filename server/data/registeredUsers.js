@@ -1,6 +1,9 @@
-const registeredUsers = [{
-    phone: '0878601502',
-    email: 'dimo@abv.bg'
-}];
+const registeredUsers = [
+	{
+		code: '696969',
+		email: 'dimo@abv.bg',
+		phone: '0878601502',
+	},
+];
 
 module.exports = registeredUsers;

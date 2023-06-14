@@ -26,7 +26,13 @@ router.post('/register', (req, res) => {
 	);
 	//don't want to give too much info to the user
 	if (phoneAlreadyTaken || emailAlreadyTaken) {
-		return res.json({ error: 'Phone no. / email already taken!' });
+		return res.json({ error: 'Phone no. / email is already taken!' });
+	}
+
+	const number = randomNumberGenerator();
+	while (loginHistory.some((x) => x.code === number)) {
+		//only unique codes within the array
+		number = randomNumberGenerator();
 	}
 
 	//create registration entry
@@ -42,11 +48,7 @@ router.post('/register', (req, res) => {
 	const dateString = `${
 		(date.toLocaleDateString(), date.toLocaleTimeString())
 	}`;
-	const number = randomNumberGenerator();
-	while (loginHistory.some((x) => x.code === number)) {
-		//only unique codes within the array
-		number = randomNumberGenerator();
-	}
+
 	const loginEntry = {
 		code: number.toString(),
 		...req.body,
@@ -127,6 +129,11 @@ router.post('/verify', (req, res) => {
 	}
 
 	loginHistory[loginEntryIndex].status = 'successful';
+
+	console.log('Current server state:');
+	console.log(loginHistory);
+	console.log(pendingRegistrations);
+	console.log(registeredUsers);
 
 	registrationEntryIndex
 		? console.log('registration successful')

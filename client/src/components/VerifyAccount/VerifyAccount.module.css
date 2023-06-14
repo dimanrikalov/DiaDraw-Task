@@ -96,6 +96,13 @@
 	gap: 6px;
 }
 
+.timer {
+	font-size: 24px;
+	font-weight: 600;
+	font-family: 'Inter';
+	color: #6d2bc1;
+}
+
 .form .inputDiv label {
 	font-family: 'Inter';
 	font-style: normal;
@@ -129,13 +136,13 @@
 	top: 42px;
 }
 
-.form .inputDiv .errorDiv {
+.errorDiv {
 	background: #fdf0f0;
 	border-radius: 5px;
 	padding: 16px;
 }
 
-.form .inputDiv .errorDiv p {
+.errorDiv p {
 	text-align: left;
 	font-family: 'Inter';
 	font-style: normal;
@@ -187,6 +194,7 @@
 	text-decoration: none;
 	font-weight: 600;
 	color: #6d2bc1;
+	cursor: pointer;
 }
 
 

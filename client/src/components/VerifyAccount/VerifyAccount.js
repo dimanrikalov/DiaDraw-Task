@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ENDPOINTS from '../../endpoints';
 import PhoneImg from '../../imgs/phone.png';
 import Envelope from '../../imgs/envelope.png';
@@ -13,6 +13,22 @@ export const VerifyAccount = ({ toVerify }) => {
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
 	const { style } = useLoadingEffect('65%');
+	const [timer, setTimer] = useState(60);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setTimer((prev) => {
+				if (prev > 0) {
+					return prev - 1;
+				}
+				return prev;
+			});
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
+	}, []);
 
 	const handleChange = (e) => {
 		setInputValue(e.target.value);
@@ -86,6 +102,13 @@ export const VerifyAccount = ({ toVerify }) => {
 						src={Envelope}
 						alt="phone-icon"
 					/>
+				)}
+				{timer > 0 ? (
+					<p className={styles.timer}>{timer}</p>
+				) : (
+					<div className={styles.errorDiv}>
+						<p>Verification code has expired!</p>
+					</div>
 				)}
 				<form className={styles.form} onSubmit={handleSubmit}>
 					<div className={styles.inputDiv}>
