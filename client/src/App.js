@@ -24,18 +24,21 @@ function App() {
 		createRoutesFromElements(
 			<Route path="/" element={<Root />}>
 				<Route index element={<HomeScreen />} />
-				<Route path="/login" element={<LoginScreen />} />
-				<Route path="/register" element={<LoginScreen />} />
+				<Route path="/auth/login" element={<LoginScreen />} />
+				<Route path="/auth/register" element={<LoginScreen />} />
 				<Route
-					path="/verify-mobile"
+					path="/auth/verify-mobile"
 					element={<VerifyAccount toVerify={'mobile'} />}
 				/>
 				<Route
-					path="/verify-email"
+					path="/auth/verify-email"
 					element={<VerifyAccount toVerify={'email'} />}
 				/>
-				<Route element={<RequireAuth/>}>
-					<Route path="/confirm" element={<ConfirmationScreen />} />
+				<Route element={<RequireAuth />}>
+					<Route
+						path="/auth/confirm"
+						element={<ConfirmationScreen />}
+					/>
 					<Route path="/login-entries" element={<TableScreen />} />
 				</Route>
 			</Route>
