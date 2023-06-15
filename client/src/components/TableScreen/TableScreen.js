@@ -78,6 +78,15 @@ export const TableScreen = () => {
 
 	const handleConfirm = (entry, state) => {
 		setEditingEntry(null);
+
+		//check if any field except the code is empty
+		const hasMissingValue = Array.from(Object.keys(state)).some(
+			(x) => state[x] === '' && x !== 'code'
+		);
+		if (hasMissingValue) {
+			return;
+		}
+
 		dispatch({ type: 'RESET_FIELDS' });
 		fetch(ENDPOINTS.LOGIN_HISTORY, {
 			method: 'POST',

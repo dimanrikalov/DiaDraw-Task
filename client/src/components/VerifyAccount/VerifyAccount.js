@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import ENDPOINTS from '../../endpoints';
+import { useEffect, useState } from 'react';
 import PhoneImg from '../../imgs/phone.png';
 import Envelope from '../../imgs/envelope.png';
-import { useNavigate } from 'react-router-dom';
 import styles from './VerifyAccount.module.css';
 import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
 const timerDuration = 60;
 
-export const VerifyAccount = ({ toVerify }) => {
+export const VerifyAccount = () => {
+	const location = useLocation();
+	const toVerify = location.pathname.split('/').pop().split('-').pop();
 	const navigate = useNavigate();
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
@@ -25,7 +27,7 @@ export const VerifyAccount = ({ toVerify }) => {
 				}
 				return prev;
 			});
-		}, 1010); //not really 60 secs but 60.6
+		}, 1010); //not really 60 secs, more like 60.6
 
 		return () => {
 			clearInterval(interval);
@@ -63,6 +65,11 @@ export const VerifyAccount = ({ toVerify }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
+		if (!inputValue) {
+			setError('Please enter a verification code!');
+			return;
+		}
 
 		fetch(ENDPOINTS.VERIFY, {
 			method: 'POST',
@@ -159,7 +166,7 @@ export const VerifyAccount = ({ toVerify }) => {
 						)}
 						{error && (
 							<div className={styles.errorDiv}>
-								<p>Invalid verification code!</p>
+								<p>{error}</p>
 							</div>
 						)}
 					</div>
