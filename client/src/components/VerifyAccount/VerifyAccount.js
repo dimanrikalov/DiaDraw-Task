@@ -37,6 +37,7 @@ export const VerifyAccount = ({ toVerify }) => {
 	};
 
 	const handleResetCode = () => {
+		setError(null);
 		setTimer(timerDuration);
 		const phone = sessionStorage.getItem('phone');
 		const email = sessionStorage.getItem('email');
@@ -52,7 +53,7 @@ export const VerifyAccount = ({ toVerify }) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if(data.error) {
+				if (data.error) {
 					setError(data.error);
 					return;
 				}
