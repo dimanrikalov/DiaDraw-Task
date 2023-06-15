@@ -27,13 +27,13 @@ const RequireNotAuth = () => {
 const RequireCredentialsInSessionStorage = () => {
 	const isAuthenticated = localStorage.getItem('id');
 	const isVerifying = sessionStorage.getItem('phone') && sessionStorage.getItem('email');
-	if(isAuthenticated) {
-		return <Navigate to="/auth/confirm"/>
-	} else if(isVerifying) {
-		return <Outlet />
+	if (isAuthenticated) {
+		return <Navigate to="/auth/confirm" />;
+	} else if (isVerifying) {
+		return <Outlet />;
 	}
-	return <Navigate to="/"/>
-}
+	return <Navigate to="/" />;
+};
 
 const Root = () => {
 	return (
@@ -48,7 +48,7 @@ function App() {
 		createRoutesFromElements(
 			<Route path="/" element={<Root />}>
 				<Route element={<RequireNotAuth />}>
-				<Route index element={<HomeScreen />} />
+					<Route index element={<HomeScreen />} />
 					<Route
 						path="/auth/login"
 						element={<CredentialsInputScreen />}
@@ -75,7 +75,7 @@ function App() {
 					/>
 					<Route path="/login-entries" element={<TableScreen />} />
 				</Route>
-				<Route path="*" element={<HomeScreen />} />
+				<Route path="*" element={<Navigate to={'/'} />} />
 			</Route>
 		)
 	);
