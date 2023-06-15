@@ -231,14 +231,14 @@ export const TableScreen = () => {
 															handleEdit(entry)
 														}
 													>
-														Edit
+														EDIT
 													</button>
 													<button
 														onClick={() =>
 															handleDelete(entry)
 														}
 													>
-														Delete
+														DELETE
 													</button>
 												</div>
 											</td>
