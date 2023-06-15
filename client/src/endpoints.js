@@ -1,4 +1,4 @@
-const BASE_URL = 'http://78.130.163.35:3001'; //http://localhost:3001 for the final commit
+const BASE_URL = 'http://localhost:3001';
 
 const ENDPOINTS = {
 	LOGIN: `${BASE_URL}/auth/login`,
