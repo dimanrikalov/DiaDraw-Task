@@ -1,9 +1,6 @@
 const router = require('express').Router();
-const loginHistory = require('../data/loginHistory');
 const authService = require('../services/authService');
-const registeredUsers = require('../data/registeredUsers');
 const timeoutService = require('../services/timeoutService.js');
-const pendingRegistrations = require('../data/pendingRegistrations');
 
 router.post('/register', (req, res) => {
 	const data = req.body;
@@ -28,12 +25,8 @@ router.post('/register', (req, res) => {
 	authService.addLoginEntry(loginEntry);
 
 	//check if email or phone is already taken
-	const phoneAlreadyTaken = registeredUsers.some(
-		(x) => x.phone === data.phone
-	);
-	const emailAlreadyTaken = registeredUsers.some(
-		(x) => x.email === data.email
-	); //don't want to give too much info to the user
+	const phoneAlreadyTaken = authService.isAlreadyTaken('phone', data.phone);
+	const emailAlreadyTaken = authService.isAlreadyTaken('email', data.email);
 	if (phoneAlreadyTaken || emailAlreadyTaken) {
 		return res.json({ error: 'Phone no. / email is already taken!' });
 	}
@@ -43,16 +36,13 @@ router.post('/register', (req, res) => {
 		code: number.toString(),
 		...req.body,
 	};
-	pendingRegistrations.push(registrationEntry);
+	authService.addPendingRegistrationEntry(registrationEntry);
 
 	//if within 1 minute there is no code entered the login status changes to failed and registration process ends
 	loginEntry.status = 'pending';
 	timeoutService.addTimeout(() => {
 		loginEntry.status = 'failed';
-		const index = pendingRegistrations.findIndex(
-			(x) => x === registrationEntry
-		);
-		pendingRegistrations.splice(index, 1);
+		authService.removePendingRegistrationEntry(registrationEntry);
 		console.log('Verification code expired!');
 	}, number.toString());
 
@@ -60,16 +50,27 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+	const data = req.body;
+	//validate the data
+	if (data.phone.length !== 10) {
+		return res.json({ error: 'Invalid phone number!' });
+	}
+	if (!data.email.includes('@')) {
+		return res.json({ error: 'Invalid email!' });
+	}
+
 	const dateString = authService.generateDateString();
 
 	const loginEntry = {
-		...req.body,
+		...data,
 		date: dateString,
 		status: 'failed',
 	};
 
 	//check if user is already registered
-	if (!authService.isRegistered(req.body)) {
+
+	const isRegistered = authService.isRegistered(data);
+	if (!isRegistered) {
 		authService.addLoginEntry(loginEntry);
 		return res.json({ error: 'Invalid username or password!' });
 	}
@@ -89,67 +90,64 @@ router.post('/login', (req, res) => {
 
 router.post('/verify', (req, res) => {
 	const code = req.body.code;
-
-	const loginEntryIndex = authService.getPendingLoginIndex(code);
-	if (loginEntryIndex === -1) {
-		console.log('/Verfiy Invalid authentication attempt!');
-		console.log(loginHistory[loginEntryIndex]);
+	const loginEntry = authService.getPendingLogin(code);
+	if (!loginEntry) {
 		return res.json({ error: 'Invalid authentication attempt!' });
 	}
 
 	timeoutService.removeTimeout(code);
+	loginEntry.status = 'successful';
 
 	//checks if the current attempt is registration attempt or not
-	const registrationEntryIndex =
-		authService.getRegistrationAttemptIndex(code);
-	if (registrationEntryIndex !== -1) {
-		const registrationEntry = authService.removeFromPendingRegistrations(
-			registrationEntryIndex
-		);
-		authService.addRegistrationEntry(registrationEntry);
+	const isRegistrationAttempt = !authService.isPendingRegistrationEntry(code);
+	if (!isRegistrationAttempt) {
+		authService.addRegistrationEntry({
+			code,
+			phone: loginEntry.phone,
+			email: loginEntry.email,
+		});
 	}
 
-	loginHistory[loginEntryIndex].status = 'successful';
-
-	res.json(loginHistory[loginEntryIndex]);
+	res.json(loginEntry);
 });
 
 router.post('/reset-code', (req, res) => {
 	const { phone, email } = req.body;
-
+	const number = authService.generateVerificationCode();
 	//check for failed login entries with these credentials
 	const failedLoginEntry = authService.getFailedLoginAttempt(phone, email);
 	if (!failedLoginEntry) {
 		return res.json({ error: 'Invalid authentication attempt!' });
 	}
+	failedLoginEntry.code = number.toString();
+	failedLoginEntry.status = 'pending';
 
-	const isRegistrationAttempt = authService.isRegistrationAttempt(
-		phone,
-		email
-	);
+	const isRegistrationAttempt = authService.isRegistered({ phone, email })
+		? false
+		: true;
 
 	//set the attempt status to pending again
-	const number = authService.generateVerificationCode();
+
 	const newPendingRegistrationEntry = {
 		code: number.toString(),
 		phone,
 		email,
 	};
 	if (isRegistrationAttempt) {
-		pendingRegistrations.push(newPendingRegistrationEntry);
+		authService.addPendingRegistrationEntry(newPendingRegistrationEntry);
 	}
-
-	failedLoginEntry.code = number.toString();
-	failedLoginEntry.status = 'pending';
 
 	//add a new timeout
 	if (isRegistrationAttempt) {
 		timeoutService.addTimeout(() => {
 			failedLoginEntry.status = 'failed';
-			const index = pendingRegistrations.findIndex(
-				(x) => x === newPendingRegistrationEntry
+			const pendingRegistrationEntry =
+				authService.getPendingRegistrationEntry(
+					newPendingRegistrationEntry
+				);
+			authService.removePendingRegistrationEntry(
+				pendingRegistrationEntry
 			);
-			pendingRegistrations.splice(index, 1);
 			console.log('Verification code expired!');
 		}, number.toString());
 	} else {
