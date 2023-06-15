@@ -16,17 +16,26 @@ const addRegistrationEntry = (entry) => {
 	registeredUsers.push(entry);
 };
 
-const getRegistrationAttemptIndex = (code) => {
-	return pendingRegistrations.findIndex((x) => x.code === code.toString());
+const addPendingRegistrationEntry = (entry) => {
+	pendingRegistrations.push(entry);
 };
 
-const getPendingLoginIndex = (code) => {
-	return loginHistory.findIndex(
+const removePendingRegistrationEntry = (entry) => {
+	const index = pendingRegistrations.findIndex((x) => x === entry);
+	pendingRegistrations.splice(index, 1);
+};
+
+const isPendingRegistrationEntry = (code) => {
+	return pendingRegistrations.some((x) => x.code === code.toString());
+};
+
+const getPendingLogin = (code) => {
+	return loginHistory.find(
 		(x) => x.code === code.toString() && x.status === 'pending'
 	);
 };
 
-const isRegistrationAttempt = (phone, email) => {
+const isRegisteredUser = (phone, email) => {
 	return registeredUsers.find((x) => x.phone === phone && x.email === email)
 		? false
 		: true;
@@ -36,10 +45,6 @@ const getFailedLoginAttempt = (phone, email) => {
 	return loginHistory.find(
 		(x) => x.phone === phone && x.email === email && x.status === 'failed'
 	);
-};
-
-const removeFromPendingRegistrations = (index) => {
-	return pendingRegistrations.splice(index, 1)[0];
 };
 
 const generateVerificationCode = () => {
@@ -62,17 +67,23 @@ const generateDateString = () => {
 		(date.toLocaleDateString(), date.toLocaleTimeString())
 	}`;
 	return dateString;
-}
+};
+
+const isAlreadyTaken = (key, value) => {
+	return registeredUsers.some((x) => x[key] === value);
+};
 
 module.exports = {
 	isRegistered,
 	addLoginEntry,
+	isAlreadyTaken,
+	getPendingLogin,
+	isRegisteredUser,
 	generateDateString,
-	getPendingLoginIndex,
 	addRegistrationEntry,
 	getFailedLoginAttempt,
-	isRegistrationAttempt,
 	generateVerificationCode,
-	getRegistrationAttemptIndex,
-	removeFromPendingRegistrations,
+	isPendingRegistrationEntry,
+	addPendingRegistrationEntry,
+	removePendingRegistrationEntry,
 };
