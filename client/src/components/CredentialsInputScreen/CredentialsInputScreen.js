@@ -180,7 +180,9 @@ export const CredentialsInputScreen = () => {
 							<p>{errorsState.loginError}</p>
 						</div>
 					)}
-					<button>CREATE ACCOUNT</button>
+					<button>
+						{operation === 'login' ? 'LOGIN' : 'CREATE ACCOUNT'}
+					</button>
 				</form>
 				<p>
 					By signing up, I agree to the{' '}

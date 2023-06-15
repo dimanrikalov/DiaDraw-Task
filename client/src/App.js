@@ -39,8 +39,8 @@ function App() {
 	const router = createBrowserRouter(
 		createRoutesFromElements(
 			<Route path="/" element={<Root />}>
-				<Route index element={<HomeScreen />} />
 				<Route element={<RequireNotAuth />}>
+				<Route index element={<HomeScreen />} />
 					<Route
 						path="/auth/login"
 						element={<CredentialsInputScreen />}

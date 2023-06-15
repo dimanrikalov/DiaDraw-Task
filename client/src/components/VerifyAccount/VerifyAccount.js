@@ -8,7 +8,7 @@ import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
-const timerDuration = 5;
+const timerDuration = 60;
 
 export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();

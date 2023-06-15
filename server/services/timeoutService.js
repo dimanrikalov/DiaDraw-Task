@@ -1,5 +1,5 @@
 const timeouts = [];
-const timeoutDuration = 5000;
+const timeoutDuration = 60000;
 
 const addTimeout = (callback, id) => {
 	const timeout = setTimeout(callback, timeoutDuration);
