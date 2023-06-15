@@ -1,10 +1,9 @@
 const router = require('express').Router();
 const loginHistory = require('../data/loginHistory');
+const authService = require('../services/authService');
 const registeredUsers = require('../data/registeredUsers');
-const randomNumberGenerator = require('../services/authService');
+const timeoutService = require('../services/timeoutService.js');
 const pendingRegistrations = require('../data/pendingRegistrations');
-
-let timeout = null;
 
 router.post('/register', (req, res) => {
 	const data = req.body;
@@ -13,67 +12,55 @@ router.post('/register', (req, res) => {
 	if (data.phone.length !== 10) {
 		return res.json({ error: 'Invalid phone number!' });
 	}
-
 	if (!data.email.includes('@')) {
 		return res.json({ error: 'Invalid email!' });
 	}
 
+	//create login entry and add entry to the login table
+	const number = authService.generateVerificationCode();
+	const dateString = authService.generateDateString();
+	const loginEntry = {
+		code: number.toString(),
+		...req.body,
+		date: dateString,
+		status: 'failed',
+	};
+	authService.addLoginEntry(loginEntry);
+
+	//check if email or phone is already taken
 	const phoneAlreadyTaken = registeredUsers.some(
 		(x) => x.phone === data.phone
 	);
 	const emailAlreadyTaken = registeredUsers.some(
 		(x) => x.email === data.email
-	);
-	//don't want to give too much info to the user
+	); //don't want to give too much info to the user
 	if (phoneAlreadyTaken || emailAlreadyTaken) {
 		return res.json({ error: 'Phone no. / email is already taken!' });
 	}
 
-	const number = randomNumberGenerator();
-	while (loginHistory.some((x) => x.code === number.toString())) {
-		//only unique codes within the array
-		number = randomNumberGenerator();
-	}
-
-	//create registration entry
+	//create registration entry and add entry to the pending registrations
 	const registrationEntry = {
 		code: number.toString(),
 		...req.body,
 	};
 	pendingRegistrations.push(registrationEntry);
 
-	//create login entry
-	//generate a number for the next verification step
-	const date = new Date();
-	const dateString = `${
-		(date.toLocaleDateString(), date.toLocaleTimeString())
-	}`;
-
-	const loginEntry = {
-		code: number.toString(),
-		...req.body,
-		date: dateString,
-		status: 'pending',
-	};
-	loginHistory.push(loginEntry);
-
 	//if within 1 minute there is no code entered the login status changes to failed and registration process ends
-	timeout = setTimeout(() => {
+	loginEntry.status = 'pending';
+	timeoutService.addTimeout(() => {
 		loginEntry.status = 'failed';
 		const index = pendingRegistrations.findIndex(
 			(x) => x === registrationEntry
 		);
 		pendingRegistrations.splice(index, 1);
-	}, 60000);
+		console.log('Verification code expired!');
+	}, number.toString());
 
 	return res.json({ code: number.toString() });
 });
 
 router.post('/login', (req, res) => {
-	const date = new Date();
-	const dateString = `${
-		(date.toLocaleDateString(), date.toLocaleTimeString())
-	}`;
+	const dateString = authService.generateDateString();
 
 	const loginEntry = {
 		...req.body,
@@ -81,64 +68,98 @@ router.post('/login', (req, res) => {
 		status: 'failed',
 	};
 
-	if (
-		!registeredUsers.some(
-			(x) => x.email === req.body.email && x.phone === req.body.phone
-		)
-	) {
-		loginHistory.push(loginEntry);
+	//check if user is already registered
+	if (!authService.isRegistered(req.body)) {
+		authService.addLoginEntry(loginEntry);
 		return res.json({ error: 'Invalid username or password!' });
 	}
 
-	let number = randomNumberGenerator(); //for the verification later
-	while (loginHistory.some((x) => x.code === number.toString())) {
-		//only unique codes within the array
-		number = randomNumberGenerator();
-	}
-
+	//setup for the verification later
+	const number = authService.generateVerificationCode();
 	loginEntry.status = 'pending';
 	loginEntry.code = number.toString();
-	loginHistory.push(loginEntry);
+	authService.addLoginEntry(loginEntry);
+	timeoutService.addTimeout(() => {
+		loginEntry.status = 'failed';
+		console.log('Verification code expired!');
+	}, number.toString());
 
-	return res.json(loginEntry);
+	return res.json({ code: number.toString() });
 });
 
 router.post('/verify', (req, res) => {
-	const loginEntryIndex = loginHistory.findIndex(
-		(x) => x.code === req.body.code.toString() && x.status === 'pending'
-	); //find if there is a pending login attempt with this code
+	const code = req.body.code;
 
+	const loginEntryIndex = authService.getPendingLoginIndex(code);
 	if (loginEntryIndex === -1) {
-		console.log('Invalid authentication attempt!');
+		console.log('/Verfiy Invalid authentication attempt!');
+		console.log(loginHistory[loginEntryIndex]);
 		return res.json({ error: 'Invalid authentication attempt!' });
 	}
 
-	clearTimeout(timeout);
+	timeoutService.removeTimeout(code);
 
 	//checks if the current attempt is registration attempt or not
-	const registrationEntryIndex = pendingRegistrations.findIndex(
-		(x) => x.code === req.body.code
-	);
-
+	const registrationEntryIndex =
+		authService.getRegistrationAttemptIndex(code);
 	if (registrationEntryIndex !== -1) {
-		const registrationData = pendingRegistrations.splice(
-			registrationEntryIndex,
-			1
-		)[0];
-		registeredUsers.push(registrationData);
+		const registrationEntry = authService.removeFromPendingRegistrations(
+			registrationEntryIndex
+		);
+		authService.addRegistrationEntry(registrationEntry);
 	}
 
 	loginHistory[loginEntryIndex].status = 'successful';
 
-	console.log('Current server state:');
-	console.log(loginHistory);
-	console.log(pendingRegistrations);
-	console.log(registeredUsers);
-
-	registrationEntryIndex !== -1
-		? console.log('registration successful')
-		: console.log('login successful');
 	res.json(loginHistory[loginEntryIndex]);
+});
+
+router.post('/reset-code', (req, res) => {
+	const { phone, email } = req.body;
+
+	//check for failed login entries with these credentials
+	const failedLoginEntry = authService.getFailedLoginAttempt(phone, email);
+	if (!failedLoginEntry) {
+		return res.json({ error: 'Invalid authentication attempt!' });
+	}
+
+	const isRegistrationAttempt = authService.isRegistrationAttempt(
+		phone,
+		email
+	);
+
+	//set the attempt status to pending again
+	const number = authService.generateVerificationCode();
+	const newPendingRegistrationEntry = {
+		code: number.toString(),
+		phone,
+		email,
+	};
+	if (isRegistrationAttempt) {
+		pendingRegistrations.push(newPendingRegistrationEntry);
+	}
+
+	failedLoginEntry.code = number.toString();
+	failedLoginEntry.status = 'pending';
+
+	//add a new timeout
+	if (isRegistrationAttempt) {
+		timeoutService.addTimeout(() => {
+			failedLoginEntry.status = 'failed';
+			const index = pendingRegistrations.findIndex(
+				(x) => x === newPendingRegistrationEntry
+			);
+			pendingRegistrations.splice(index, 1);
+			console.log('Verification code expired!');
+		}, number.toString());
+	} else {
+		timeoutService.addTimeout(() => {
+			failedLoginEntry.status = 'failed';
+			console.log('Verification code expired!');
+		}, number.toString());
+	}
+
+	return res.json({ code: number.toString() });
 });
 
 module.exports = router;
