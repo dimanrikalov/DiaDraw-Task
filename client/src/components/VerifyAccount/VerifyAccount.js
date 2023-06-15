@@ -8,12 +8,14 @@ import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
+const timerDuration = 5;
+
 export const VerifyAccount = ({ toVerify }) => {
 	const navigate = useNavigate();
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
 	const { style } = useLoadingEffect('65%');
-	const [timer, setTimer] = useState(60);
+	const [timer, setTimer] = useState(timerDuration);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -23,7 +25,7 @@ export const VerifyAccount = ({ toVerify }) => {
 				}
 				return prev;
 			});
-		}, 1000);
+		}, 1010); //not really 60 secs but 60.6
 
 		return () => {
 			clearInterval(interval);
@@ -32,6 +34,30 @@ export const VerifyAccount = ({ toVerify }) => {
 
 	const handleChange = (e) => {
 		setInputValue(e.target.value);
+	};
+
+	const handleResetCode = () => {
+		setTimer(timerDuration);
+		const phone = sessionStorage.getItem('phone');
+		const email = sessionStorage.getItem('email');
+		fetch(ENDPOINTS.RESET_CODE, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				phone,
+				email,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if(data.error) {
+					setError(data.error);
+					return;
+				}
+				console.log(data.code);
+			});
 	};
 
 	const handleSubmit = (e) => {
@@ -106,7 +132,7 @@ export const VerifyAccount = ({ toVerify }) => {
 				{timer > 0 ? (
 					<p className={styles.timer}>{timer}</p>
 				) : (
-					<div className={styles.errorDiv}>
+					<div className={styles.expirationErrorDiv}>
 						<p>Verification code has expired!</p>
 					</div>
 				)}
@@ -141,7 +167,14 @@ export const VerifyAccount = ({ toVerify }) => {
 				</form>
 				<div className={styles.subscriptDiv}>
 					<p>
-						Didn't receive code? <button>Resend Code</button>
+						Didn't receive code in time?{' '}
+						<button
+							onClick={handleResetCode}
+							disabled={timer > 0}
+							style={timer > 0 ? { color: 'grey' } : {}}
+						>
+							Resend Code
+						</button>
 					</p>
 					<p>OR</p>
 					<p>

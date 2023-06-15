@@ -21,7 +21,7 @@
 	gap: 32px;
 	background: #ffffff;
 	border: 1px solid #e0e0e0;
-	box-shadow: 0px 0px 18px 2px #DBDBDB;
+	box-shadow: 0px 0px 18px 2px #dbdbdb;
 	border-radius: 10px;
 	align-items: center;
 	padding: 46px 0px;
@@ -125,7 +125,14 @@
 
 .form .inputDiv input:focus {
 	outline: 2px solid #6d2bc1;
-	border-color:  transparent;
+	border-color: transparent;
+}
+
+.expirationErrorDiv {
+	background: #fdf0f0;
+	border-radius: 5px;
+	padding: 16px;
+	width: 333.38px;
 }
 
 .errorIcon {
@@ -142,7 +149,8 @@
 	padding: 16px;
 }
 
-.errorDiv p {
+.errorDiv p,
+.expirationErrorDiv p {
 	text-align: left;
 	font-family: 'Inter';
 	font-style: normal;
@@ -197,7 +205,6 @@
 	cursor: pointer;
 }
 
-
 @media only screen and (max-width: 460px) {
 	.container {
 		margin-top: 32px;
@@ -221,5 +228,8 @@
 	.titleDiv .arrow {
 		top: 4px;
 		left: -7px;
+	}
+	.expirationErrorDiv {
+		width: 100%;
 	}
 }
