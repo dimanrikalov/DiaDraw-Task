@@ -3,8 +3,8 @@ import { useReducer } from 'react';
 const ERROR_EVENTS = {
 	ERROR_PHONE: 'ERROR_PHONE',
 	ERROR_EMAIL: 'ERROR_EMAIL',
-	ERROR_RESPONSE: 'ERROR_RESPONSE',
 	ERROR_RESET: 'ERROR_RESET',
+	ERROR_RESPONSE: 'ERROR_RESPONSE',
 };
 
 const errorReducer = (state, action) => {

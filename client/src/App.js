@@ -1,17 +1,17 @@
 import styles from './App.module.css';
 import { HomeScreen } from './components/HomeScreen/HomeScreen';
-import { CredentialsInputScreen } from './components/CredentialsInputScreen/CredentialsInputScreen';
-import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
 import { TableScreen } from './components/TableScreen/TableScreen';
+import { VerifyAccount } from './components/VerifyAccount/VerifyAccount';
 import { ConfirmationScreen } from './components/ConfirmationScreen/ConfirmationScreen';
+import { CredentialsInputScreen } from './components/CredentialsInputScreen/CredentialsInputScreen';
 
 import {
+	Route,
+	Outlet,
+	Navigate,
+	RouterProvider,
 	createBrowserRouter,
 	createRoutesFromElements,
-	Navigate,
-	Outlet,
-	Route,
-	RouterProvider,
 } from 'react-router-dom';
 
 const RequireAuth = () => {
@@ -34,6 +34,14 @@ const RequireCredentialsInSessionStorage = () => {
 	}
 	return <Navigate to="/"/>
 }
+
+const Root = () => {
+	return (
+		<>
+			<Outlet />
+		</>
+	);
+};
 
 function App() {
 	const router = createBrowserRouter(
@@ -84,13 +92,5 @@ function App() {
 		</div>
 	);
 }
-
-const Root = () => {
-	return (
-		<>
-			<Outlet />
-		</>
-	);
-};
 
 export default App;

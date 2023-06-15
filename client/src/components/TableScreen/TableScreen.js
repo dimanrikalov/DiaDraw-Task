@@ -48,7 +48,6 @@ export const TableScreen = () => {
 	};
 
 	const handleDelete = (entry) => {
-		// Perform delete request to the server using the code
 		fetch(ENDPOINTS.LOGIN_HISTORY, {
 			method: 'DELETE',
 			headers: {
