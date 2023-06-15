@@ -92,7 +92,7 @@ router.post('/verify', (req, res) => {
 	const code = req.body.code;
 	const loginEntry = authService.getPendingLogin(code);
 	if (!loginEntry) {
-		return res.json({ error: 'Invalid authentication attempt!' });
+		return res.json({ error: 'Invalid verification code!' });
 	}
 
 	timeoutService.removeTimeout(code);
@@ -141,12 +141,8 @@ router.post('/reset-code', (req, res) => {
 	if (isRegistrationAttempt) {
 		timeoutService.addTimeout(() => {
 			failedLoginEntry.status = 'failed';
-			const pendingRegistrationEntry =
-				authService.getPendingRegistrationEntry(
-					newPendingRegistrationEntry
-				);
 			authService.removePendingRegistrationEntry(
-				pendingRegistrationEntry
+				newPendingRegistrationEntry
 			);
 			console.log('Verification code expired!');
 		}, number.toString());
