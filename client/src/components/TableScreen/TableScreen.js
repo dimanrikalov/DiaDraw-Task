@@ -254,7 +254,9 @@ export const TableScreen = () => {
 					</h1>
 				)}
 			</div>
-			<button className={styles.backButton} onClick={() => navigate(-1)}>BACK</button>
+			<button className={styles.backButton} onClick={() => navigate(-1)}>
+				BACK
+			</button>
 		</div>
 	);
 };
