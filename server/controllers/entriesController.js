@@ -23,11 +23,7 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
 	const id = req.params.id;
 	const entry = entriesService.getEntry(id);
-	if (entry) {
-		res.json(entry);
-	} else {
-		res.json(null);
-	}
+	return res.json(entry);
 });
 
 module.exports = router;

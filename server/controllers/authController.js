@@ -121,7 +121,7 @@ router.post('/verify', (req, res) => {
 		});
 	}
 
-	res.json(loginEntry);
+	return res.json(loginEntry);
 });
 
 router.post('/reset-code', (req, res) => {

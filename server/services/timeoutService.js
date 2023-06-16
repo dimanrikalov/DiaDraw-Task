@@ -12,9 +12,9 @@ const removeTimeout = (id, phone, email) => {
 	const timeoutIndex = timeouts.findIndex(
 		(x) => x.id === id && x.phone === phone && x.email === email
 	);
-    if(timeoutIndex === -1) {
-        return 'Invalid verification code';
-    }
+	if (timeoutIndex === -1) {
+		return 'Invalid verification code';
+	}
 	clearTimeout(timeouts[timeoutIndex].timeout);
 	const removedTimeout = timeouts.splice(timeoutIndex, 1)[0];
 	console.log('Timeout with id: ' + removedTimeout.id + ' removed.');
