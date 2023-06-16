@@ -70,7 +70,10 @@ const generateDateString = () => {
 };
 
 const isAlreadyTaken = (key, value) => {
-	return registeredUsers.some((x) => x[key] === value);
+	return (
+		registeredUsers.some((x) => x[key] === value) ||
+		pendingRegistrations.some((x) => x[key] === value)
+	);
 };
 
 module.exports = {

@@ -24,7 +24,7 @@ router.post('/register', (req, res) => {
 	};
 	authService.addLoginEntry(loginEntry);
 
-	//check if email or phone is already taken
+	//check if email or phone is already registered or in the process of registering
 	const phoneAlreadyTaken = authService.isAlreadyTaken('phone', data.phone);
 	const emailAlreadyTaken = authService.isAlreadyTaken('email', data.email);
 	if (phoneAlreadyTaken || emailAlreadyTaken) {
