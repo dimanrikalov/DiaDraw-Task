@@ -1,57 +1,26 @@
+import { useState } from 'react';
 import ENDPOINTS from '../../endpoints';
-import { useEffect, useState } from 'react';
 import PhoneImg from '../../imgs/phone.png';
 import Envelope from '../../imgs/envelope.png';
 import styles from './VerifyAccount.module.css';
+import { useTimer } from '../../hooks/useTimer';
 import BackArrow from '../../imgs/back-arrow.png';
 import ErrorIcon from '../../imgs/input-error.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
 export const VerifyAccount = () => {
-	const location = useLocation();
 	const navigate = useNavigate();
+	const location = useLocation();
+	
+	const { style } = useLoadingEffect('65%');
 	const phone = sessionStorage.getItem('phone');
 	const email = sessionStorage.getItem('email');
 	const toVerify = location.pathname.split('/').pop().split('-').pop();
+
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
-	const { style } = useLoadingEffect('65%');
-	const [timer, setTimer] = useState(0);
-
-	const getTimeRemaining = () => {
-		fetch(ENDPOINTS.GET_TIMEOUT_DURATION, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				phone,
-				email,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				setTimer(data);
-			});
-	};
-
-	useEffect(() => {
-		getTimeRemaining();
-
-		const interval = setInterval(() => {
-			setTimer((prev) => {
-				if (prev > 0) {
-					return prev - 1;
-				}
-				return prev;
-			});
-		}, 1000);
-
-		return () => {
-			clearInterval(interval);
-		};
-	}, []);
+	const { timer, getTimeRemaining } = useTimer(60);
 
 	const handleChange = (e) => {
 		setInputValue(e.target.value);
