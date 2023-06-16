@@ -3,7 +3,7 @@ const timeoutDuration = 60000;
 
 const addTimeout = (callback, id, phone, email) => {
 	const timeout = setTimeout(callback, timeoutDuration);
-	timeouts.push({ id, timeout, phone, email });
+	timeouts.push({ id, timeout, phone, email, startedAt: Date.now() });
 	console.log('Timeout with id: ' + id + ' added.');
 	return timeout;
 };
@@ -20,7 +20,19 @@ const removeTimeout = (id, phone, email) => {
 	console.log('Timeout with id: ' + removedTimeout.id + ' removed.');
 };
 
+const getRemainingTime = (phone, email) => {
+	const timeout = timeouts.find(
+		(x) => x.phone === phone && x.email === email
+	);
+	const currentTime = Date.now();
+	const elapsedTime = currentTime - timeout.startedAt;
+	return Math.ceil(
+		(timeoutDuration - Math.abs(timeout.timeout - elapsedTime)) / 1000
+	);
+};
+
 module.exports = {
 	addTimeout,
 	removeTimeout,
+	getRemainingTime,
 };

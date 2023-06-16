@@ -132,8 +132,9 @@ router.post('/reset-code', (req, res) => {
 	if (!failedLoginEntry) {
 		return res.json({ error: 'Invalid authentication attempt!' });
 	}
-	failedLoginEntry.code = number.toString();
-	failedLoginEntry.status = 'pending';
+
+	//remove current timeout
+	timeoutService.removeTimeout(failedLoginEntry.code, phone, email);
 
 	const isRegistrationAttempt = authService.isRegistered({ phone, email })
 		? false
@@ -150,6 +151,8 @@ router.post('/reset-code', (req, res) => {
 		authService.addPendingRegistrationEntry(newPendingRegistrationEntry);
 	}
 
+	failedLoginEntry.code = number.toString();
+	failedLoginEntry.status = 'pending';
 	//add a new timeout
 	if (isRegistrationAttempt) {
 		timeoutService.addTimeout(
@@ -177,6 +180,12 @@ router.post('/reset-code', (req, res) => {
 	}
 
 	return res.json({ code: number.toString() });
+});
+
+router.post('/timeout-remaining', (req, res) => {
+	const { phone, email } = req.body;
+	const timeRemaining = timeoutService.getRemainingTime(phone, email);
+	return res.json(timeRemaining);
 });
 
 module.exports = router;

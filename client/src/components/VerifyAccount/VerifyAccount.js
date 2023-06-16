@@ -8,18 +8,37 @@ import ErrorIcon from '../../imgs/input-error.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLoadingEffect } from '../../hooks/useLoadingEffect';
 
-const timerDuration = 60;
-
 export const VerifyAccount = () => {
 	const location = useLocation();
-	const toVerify = location.pathname.split('/').pop().split('-').pop();
 	const navigate = useNavigate();
+	const phone = sessionStorage.getItem('phone');
+	const email = sessionStorage.getItem('email');
+	const toVerify = location.pathname.split('/').pop().split('-').pop();
 	const [error, setError] = useState(null);
 	const [inputValue, setInputValue] = useState('');
 	const { style } = useLoadingEffect('65%');
-	const [timer, setTimer] = useState(timerDuration);
+	const [timer, setTimer] = useState(0);
+
+	const getTimeRemaining = () => {
+		fetch(ENDPOINTS.GET_TIMEOUT_DURATION, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				phone,
+				email,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				setTimer(data);
+			});
+	};
 
 	useEffect(() => {
+		getTimeRemaining();
+
 		const interval = setInterval(() => {
 			setTimer((prev) => {
 				if (prev > 0) {
@@ -27,7 +46,7 @@ export const VerifyAccount = () => {
 				}
 				return prev;
 			});
-		}, 1010); //not really 60 secs, more like 60.6
+		}, 1000);
 
 		return () => {
 			clearInterval(interval);
@@ -40,9 +59,7 @@ export const VerifyAccount = () => {
 
 	const handleResetCode = () => {
 		setError(null);
-		setTimer(timerDuration);
-		const phone = sessionStorage.getItem('phone');
-		const email = sessionStorage.getItem('email');
+
 		fetch(ENDPOINTS.RESET_CODE, {
 			method: 'POST',
 			headers: {
@@ -59,15 +76,14 @@ export const VerifyAccount = () => {
 					setError(data.error);
 					return;
 				}
+				getTimeRemaining();
 				console.log(data.code);
 			});
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		const phone = sessionStorage.getItem('phone');
-		const email = sessionStorage.getItem('email');
-		
+
 		if (!inputValue) {
 			setError('Please enter a verification code!');
 			return;
