@@ -40,11 +40,16 @@ router.post('/register', (req, res) => {
 
 	//if within 1 minute there is no code entered the login status changes to failed and registration process ends
 	loginEntry.status = 'pending';
-	timeoutService.addTimeout(() => {
-		loginEntry.status = 'failed';
-		authService.removePendingRegistrationEntry(registrationEntry);
-		console.log('Verification code expired!');
-	}, number.toString());
+	timeoutService.addTimeout(
+		() => {
+			loginEntry.status = 'failed';
+			authService.removePendingRegistrationEntry(registrationEntry);
+			console.log('Verification code expired!');
+		},
+		number.toString(),
+		data.phone,
+		data.email
+	);
 
 	return res.json({ code: number.toString() });
 });
@@ -80,22 +85,30 @@ router.post('/login', (req, res) => {
 	loginEntry.status = 'pending';
 	loginEntry.code = number.toString();
 	authService.addLoginEntry(loginEntry);
-	timeoutService.addTimeout(() => {
-		loginEntry.status = 'failed';
-		console.log('Verification code expired!');
-	}, number.toString());
+	timeoutService.addTimeout(
+		() => {
+			loginEntry.status = 'failed';
+			console.log('Verification code expired!');
+		},
+		number.toString(),
+		data.phone,
+		data.email
+	);
 
 	return res.json({ code: number.toString() });
 });
 
 router.post('/verify', (req, res) => {
-	const code = req.body.code;
+	const { code, phone, email } = req.body;
 	const loginEntry = authService.getPendingLogin(code);
 	if (!loginEntry) {
 		return res.json({ error: 'Invalid verification code!' });
 	}
 
-	timeoutService.removeTimeout(code);
+	const error = timeoutService.removeTimeout(code, phone, email);
+	if (error) {
+		return res.json({ error });
+	}
 	loginEntry.status = 'successful';
 
 	//checks if the current attempt is registration attempt or not
@@ -139,18 +152,28 @@ router.post('/reset-code', (req, res) => {
 
 	//add a new timeout
 	if (isRegistrationAttempt) {
-		timeoutService.addTimeout(() => {
-			failedLoginEntry.status = 'failed';
-			authService.removePendingRegistrationEntry(
-				newPendingRegistrationEntry
-			);
-			console.log('Verification code expired!');
-		}, number.toString());
+		timeoutService.addTimeout(
+			() => {
+				failedLoginEntry.status = 'failed';
+				authService.removePendingRegistrationEntry(
+					newPendingRegistrationEntry
+				);
+				console.log('Verification code expired!');
+			},
+			number.toString(),
+			phone,
+			email
+		);
 	} else {
-		timeoutService.addTimeout(() => {
-			failedLoginEntry.status = 'failed';
-			console.log('Verification code expired!');
-		}, number.toString());
+		timeoutService.addTimeout(
+			() => {
+				failedLoginEntry.status = 'failed';
+				console.log('Verification code expired!');
+			},
+			number.toString(),
+			phone,
+			email
+		);
 	}
 
 	return res.json({ code: number.toString() });

@@ -65,7 +65,9 @@ export const VerifyAccount = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
+		const phone = sessionStorage.getItem('phone');
+		const email = sessionStorage.getItem('email');
+		
 		if (!inputValue) {
 			setError('Please enter a verification code!');
 			return;
@@ -78,6 +80,8 @@ export const VerifyAccount = () => {
 			},
 			body: JSON.stringify({
 				code: inputValue,
+				phone,
+				email,
 			}),
 		})
 			.then((res) => res.json())
