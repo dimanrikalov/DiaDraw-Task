@@ -10,4 +10,4 @@ Instructions:
 4. Open the server folder inside another terminal window
 5. Type "npm i"
 6. Type "npm start", nodemon should start the express.js server
-7.Note: The table, when viewed from a mobile device becomes scrollable, since it cannot be contained within the viewport width of a normal mobile device
+7. Note: The table, when viewed from a mobile device becomes scrollable, since it cannot be contained within the viewport width of a normal mobile device
