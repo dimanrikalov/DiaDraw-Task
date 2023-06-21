@@ -7,6 +7,7 @@ const ENDPOINTS = {
 	RESET_CODE: `${BASE_URL}/auth/reset-code`,
 	LOGIN_HISTORY: `${BASE_URL}/login-entries`,
 	GET_USER_DATA: (id) => `${this.LOGIN_HISTORY}/${id}`,
+	GET_TIMEOUT_DURATION: `${BASE_URL}/auth/timeout-remaining`
 };
 
 export default ENDPOINTS;
